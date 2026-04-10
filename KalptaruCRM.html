@@ -1,0 +1,2917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KalptaruCRM</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f2ed;--bg2:#ebe8e2;--surface:#ffffff;--surface2:#f9f7f4;--surface3:#f0ede8;
+  --border:#e2ddd6;--border2:#cdc8bf;
+  --solar:#e87400;--solar-glow:rgba(232,116,0,.1);
+  --green:#12936a;--green-bg:rgba(18,147,106,.1);
+  --blue:#2563eb;--blue-bg:rgba(37,99,235,.1);
+  --red:#dc2626;--red-bg:rgba(220,38,38,.1);
+  --amber:#c97a00;--amber-bg:rgba(201,122,0,.1);
+  --purple:#7c3aed;--purple-bg:rgba(124,58,237,.1);
+  --teal:#0d9488;--teal-bg:rgba(13,148,136,.1);
+  --text:#1a2035;--text2:#4a5568;--text3:#7a8698;
+  --font:'Inter',sans-serif;--font-d:'Syne',sans-serif;--mono:'JetBrains Mono',monospace;
+  --r:10px;--r2:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:13px;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* HEADER */
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:90;box-shadow:0 1px 12px rgba(0,0,0,.08);}
+.logo{display:flex;align-items:center;gap:10px;min-width:200px;}
+.logo img{height:34px;width:auto;object-fit:contain;}
+.logo-info .logo-name{font-family:var(--font-d);font-size:16px;font-weight:800;}
+.logo-info .logo-sub{font-size:9px;color:var(--text3);letter-spacing:.4px;font-weight:600;}
+.tabs{display:flex;gap:2px;}
+.tab-btn{padding:7px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid transparent;color:var(--text3);background:transparent;transition:all .18s;white-space:nowrap;font-family:var(--font);}
+.tab-btn:hover{color:var(--text);background:var(--surface2);}
+.tab-btn.active{color:var(--solar);background:var(--solar-glow);border-color:rgba(245,166,35,.3);}
+.hright{display:flex;align-items:center;gap:7px;min-width:200px;justify-content:flex-end;}
+.spill{display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:20px;background:var(--surface2);border:1px solid var(--border);font-size:11px;color:var(--text3);cursor:pointer;transition:all .15s;}
+.spill:hover{border-color:var(--solar);}
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--red);flex-shrink:0;}
+.sdot.on{background:var(--green);box-shadow:0 0 6px var(--green);}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--r);font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .18s;white-space:nowrap;}
+.btn-solar{background:linear-gradient(135deg,var(--solar),#c85e00);color:#ffffff;}
+.btn-solar:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(245,166,35,.4);}
+.btn-teal{background:var(--teal-bg);color:var(--teal);border:1px solid var(--teal);}
+.btn-teal:hover{background:var(--teal);color:#0b0e17;}
+.btn-outline{background:transparent;border:1px solid var(--border2);color:var(--text2);}
+.btn-outline:hover{border-color:var(--solar);color:var(--solar);}
+.btn-ghost{background:transparent;color:var(--text3);border:1px solid transparent;}
+.btn-ghost:hover{background:var(--surface2);color:var(--text);}
+.btn-danger{background:var(--red-bg);color:var(--red);border:1px solid var(--red);}
+.btn-danger:hover{background:var(--red);color:#fff;}
+.btn-sm{padding:5px 10px;font-size:11px;}
+.btn-xs{padding:3px 8px;font-size:10px;border-radius:6px;}
+
+/* PAGE */
+.page-wrap{padding:16px 20px;}
+.tab-page{display:none;}.tab-page.active{display:block;}
+
+/* FILTER BAR */
+.flt-bar{display:flex;align-items:flex-end;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;margin-bottom:14px;flex-wrap:wrap;}
+.flt-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:3px;}
+.flt-sel{padding:6px 9px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-family:var(--font);font-size:12px;outline:none;cursor:pointer;transition:border-color .2s;}
+.flt-sel:focus{border-color:var(--solar);}
+
+/* MULTI-MONTH PICKER */
+.mpk-wrap{position:relative;display:inline-flex;flex-direction:column;gap:3px;}
+.mpk-btn{padding:6px 28px 6px 9px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-family:var(--font);font-size:12px;outline:none;cursor:pointer;transition:border-color .2s;text-align:left;white-space:nowrap;min-width:96px;position:relative;}
+.mpk-btn:after{content:'▾';position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:10px;color:var(--text3);pointer-events:none;}
+.mpk-btn.active{border-color:var(--solar);color:var(--solar);font-weight:700;}
+.mpk-btn:focus{border-color:var(--solar);}
+.mpk-drop{position:absolute;top:calc(100% + 4px);left:0;z-index:9999;background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.13);min-width:160px;padding:6px 0;display:none;}
+.mpk-drop.open{display:block;}
+.mpk-all{display:flex;align-items:center;gap:7px;padding:6px 12px 6px 11px;font-size:11px;font-weight:700;color:var(--text2);cursor:pointer;border-bottom:1px solid var(--border);margin-bottom:4px;user-select:none;}
+.mpk-all:hover{background:var(--surface2);}
+.mpk-item{display:flex;align-items:center;gap:7px;padding:5px 12px 5px 11px;font-size:12px;color:var(--text);cursor:pointer;user-select:none;}
+.mpk-item:hover{background:var(--solar-glow);}
+.mpk-cb{width:14px;height:14px;border:1.5px solid var(--border);border-radius:3px;background:var(--surface2);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;}
+.mpk-item.chk .mpk-cb,.mpk-all.chk .mpk-cb{background:var(--solar);border-color:var(--solar);}
+.mpk-item.chk .mpk-cb:after,.mpk-all.chk .mpk-cb:after{content:'✓';font-size:9px;color:#fff;font-weight:800;line-height:1;}
+
+/* SEARCH BAR */
+.search-bar{display:flex;align-items:center;gap:10px;margin-bottom:13px;}
+.sbox{position:relative;flex:1;max-width:380px;}
+.sbox-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;}
+.sinp{width:100%;padding:8px 12px 8px 32px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface2);color:var(--text);font-family:var(--font);font-size:12px;outline:none;transition:border-color .2s;}
+.sinp:focus{border-color:var(--solar);background:var(--surface3);}
+.sinp::placeholder{color:var(--text3);}
+
+/* DASHBOARD */
+.dash-stats{display:grid;grid-template-columns:repeat(6,1fr);gap:11px;margin-bottom:14px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px;transition:transform .2s,border-color .2s;}
+.stat-card:hover{transform:translateY(-2px);border-color:var(--border2);}
+.sc-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;margin-bottom:8px;}
+.sc-val{font-family:var(--font-d);font-size:22px;font-weight:800;line-height:1;margin-bottom:2px;}
+.sc-label{font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.7px;}
+.sc-sub{font-size:10px;color:var(--text3);margin-top:2px;}
+.dash-grid{display:grid;gap:13px;}
+.d2{grid-template-columns:1fr 1fr;}.d3{grid-template-columns:1.2fr 1fr 1fr;}
+.dash-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:15px;}
+.dct{font-size:12px;font-weight:700;margin-bottom:11px;display:flex;align-items:center;justify-content:space-between;}
+.dct span{font-size:10px;color:var(--text3);font-weight:400;}
+.bar-chart{display:flex;flex-direction:column;gap:9px;}
+.bar-row{display:flex;align-items:center;gap:8px;}
+.bar-lbl{font-size:10px;color:var(--text2);width:82px;flex-shrink:0;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.bar-track{flex:1;height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:3px;transition:width .8s ease;}
+.bar-val{font-size:10px;font-weight:700;color:var(--text2);width:58px;text-align:right;}
+.sg-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.sg-item{background:var(--surface2);border-radius:7px;padding:8px 10px;}
+.sg-top{display:flex;justify-content:space-between;margin-bottom:4px;}
+.sg-name{font-size:9px;font-weight:700;color:var(--text2);}
+.sg-val{font-size:10px;font-weight:800;color:var(--solar);}
+.sg-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.sg-fill{height:100%;background:linear-gradient(90deg,var(--solar),var(--green));border-radius:2px;transition:width .8s;}
+
+/* MONTHLY TABLE */
+.mtable{width:100%;border-collapse:collapse;}
+.mtable th{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);padding:7px 9px;text-align:left;border-bottom:1px solid var(--border);}
+.mtable td{font-size:11px;padding:7px 9px;border-bottom:1px solid rgba(0,0,0,.05);color:var(--text2);}
+.mtable tbody tr:hover td{background:rgba(232,116,0,.05);}
+.mtable .tot-row td{background:rgba(232,116,0,.07)!important;color:var(--solar)!important;font-weight:700!important;border-top:1px solid var(--border)!important;}
+
+/* PAYMENT DASHBOARD TABLE */
+.pdtable{width:100%;border-collapse:collapse;}
+.pdtable{width:100%;border-collapse:collapse;}
+.pdtable th{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);padding:7px 10px;text-align:left;border-bottom:1px solid var(--border);cursor:pointer;user-select:none;transition:color .15s;}
+.pdtable th:hover{color:var(--text);}
+.pdtable td{font-size:12px;padding:9px 10px;border-bottom:1px solid rgba(0,0,0,.05);color:var(--text2);}
+.pdtable tbody tr:hover td{background:rgba(232,116,0,.05);}
+
+/* EXCEL TABLE */
+.table-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;}
+.tc-head{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:7px;}
+.tc-title{font-size:13px;font-weight:700;}
+.tc-count{font-size:11px;color:var(--text3);font-family:var(--mono);}
+.tc-kw{font-size:11px;font-weight:700;color:var(--solar);}
+.tbl-outer{overflow-x:auto;}
+table.excel-tbl{width:100%;border-collapse:collapse;}
+.th-wrap{display:flex;align-items:center;justify-content:space-between;gap:3px;min-width:60px;}
+.th-label{white-space:nowrap;}
+.flt-btn{width:16px;height:16px;border-radius:4px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:9px;flex-shrink:0;transition:all .15s;}
+.flt-btn:hover,.flt-btn.active{background:rgba(245,166,35,.15);color:var(--solar);}
+table.excel-tbl thead{background:var(--surface2);border-bottom:2px solid var(--border);}
+table.excel-tbl th{padding:9px 10px;text-align:left;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);border-bottom:1px solid var(--border);position:relative;}
+table.excel-tbl td{padding:10px 10px;font-size:12px;border-bottom:1px solid rgba(0,0,0,.05);color:var(--text2);vertical-align:middle;}
+table.excel-tbl tbody tr{cursor:pointer;transition:background .1s;}
+table.excel-tbl tbody tr:hover{background:rgba(232,116,0,.04);}
+table.excel-tbl tr:last-child td{border-bottom:none;}
+table.excel-tbl th.filtered .th-label{color:var(--solar);}
+table.excel-tbl th.filtered .flt-btn{background:rgba(245,166,35,.15);color:var(--solar);}
+.tfoot-row td{background:rgba(232,116,0,.06);border-top:1.5px solid var(--border2);font-weight:700;font-size:11px;color:var(--solar);padding:9px 10px;}
+
+/* COL FILTER DROPDOWN */
+.cfd{position:absolute;top:calc(100% + 2px);left:0;z-index:400;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);min-width:180px;max-width:230px;box-shadow:0 8px 24px rgba(0,0,0,.12);overflow:hidden;}
+.cfd-head{padding:8px 10px 6px;border-bottom:1px solid var(--border);}
+.cfd-sinp{width:100%;padding:5px 8px;border:1px solid var(--border);border-radius:7px;background:var(--surface2);color:var(--text);font-family:var(--font);font-size:11px;outline:none;}
+.cfd-sinp:focus{border-color:var(--solar);}
+.cfd-acts{display:flex;gap:5px;margin-top:5px;}
+.cfd-a{flex:1;padding:3px 6px;border-radius:5px;font-size:9px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--text2);font-family:var(--font);transition:all .15s;}
+.cfd-a:hover{border-color:var(--solar);color:var(--solar);}
+.cfd-list{max-height:170px;overflow-y:auto;padding:2px 0;}
+.cfd-item{display:flex;align-items:center;gap:7px;padding:5px 10px;cursor:pointer;transition:background .1s;font-size:11px;color:var(--text2);}
+.cfd-item:hover{background:var(--surface2);}
+.cfd-item input{accent-color:var(--solar);width:12px;height:12px;cursor:pointer;flex-shrink:0;}
+.cfd-foot{padding:6px 10px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:5px;}
+.cfd-sort{display:flex;gap:4px;padding:6px 10px;border-bottom:1px solid var(--border);background:rgba(245,166,35,.04);}
+.cfd-sort-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:4px;padding:5px 8px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--text3);font-family:var(--font);transition:all .15s;}
+.cfd-sort-btn:hover{border-color:var(--solar);color:var(--solar);}
+.cfd-sort-btn.on{background:rgba(245,166,35,.15);border-color:var(--solar);color:var(--solar);}
+th.sorted-asc .th-label::after{content:' ↑';color:var(--solar);font-size:9px;}
+th.sorted-desc .th-label::after{content:' ↓';color:var(--solar);font-size:9px;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:9px;font-weight:700;white-space:nowrap;}
+.b-done{background:var(--green-bg);color:var(--green);}
+.b-pending{background:var(--amber-bg);color:var(--amber);}
+.b-failed{background:var(--red-bg);color:var(--red);}
+.b-na{background:var(--surface3);color:var(--text3);}
+.b-complete{background:var(--green-bg);color:var(--green);}
+.b-progress{background:var(--blue-bg);color:var(--blue);}
+.b-pend2{background:var(--amber-bg);color:var(--amber);}
+.b-blocked{background:var(--red-bg);color:var(--red);}
+.b-active{background:rgba(79,142,247,.12);color:var(--blue);}
+.b-loan{background:var(--blue-bg);color:var(--blue);}
+.b-cash{background:var(--green-bg);color:var(--green);}
+.b-cheque{background:var(--purple-bg);color:var(--purple);}
+.b-upi{background:var(--teal-bg);color:var(--teal);}
+.b-refund{background:var(--red-bg);color:var(--red);}
+.b-discount{background:var(--amber-bg);color:var(--amber);}
+.cap-tag{display:inline-block;padding:2px 7px;border-radius:5px;background:rgba(232,116,0,.1);color:var(--solar);font-size:10px;font-weight:700;font-family:var(--mono);}
+.oid{font-family:var(--mono);font-weight:700;font-size:11px;color:var(--solar);}
+.fvr{font-family:var(--mono);font-weight:700;font-size:11px;color:var(--teal);}
+.cname-cell .cn{font-weight:600;font-size:12px;color:var(--text);}
+.cname-cell .cm{font-size:10px;color:var(--text3);margin-top:1px;}
+.pdots{display:flex;gap:3px;}
+.pdot{width:7px;height:7px;border-radius:50%;}
+.pd-done{background:var(--green);}.pd-pending{background:var(--amber);}.pd-failed{background:var(--red);}.pd-na{background:var(--border2);}.pd-cash{background:var(--teal);}
+
+/* TRACKING SUMMARY */
+.trk-sum{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin-bottom:13px;}
+.ts-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:10px;text-align:center;transition:border-color .2s,box-shadow .2s;}
+.ts-card.ts-active{border-color:var(--solar);box-shadow:0 0 0 2px rgba(232,116,0,.18);}
+.ts-icon{font-size:15px;margin-bottom:2px;}
+.ts-name{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--text3);margin-bottom:4px;}
+.ts-kw{font-size:15px;font-weight:800;color:var(--solar);font-family:var(--font-d);line-height:1;}
+.ts-cnt{font-size:9px;color:var(--green);margin-top:2px;}
+.ts-extra{font-size:8px;color:var(--text3);margin-top:2px;}
+.ts-bar{height:2px;background:var(--border);border-radius:2px;margin-top:5px;overflow:hidden;}
+.ts-fill{height:100%;background:linear-gradient(90deg,var(--solar),var(--green));border-radius:2px;}
+.ts-pend-btn{margin-top:6px;width:100%;padding:3px 0;border-radius:5px;font-size:8px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--text3);font-family:var(--font);transition:all .15s;letter-spacing:.2px;}
+.ts-pend-btn:hover{border-color:var(--amber);color:var(--amber);background:var(--amber-bg);}
+.ts-pend-btn.ts-pend-on{border-color:var(--amber);color:var(--amber);background:var(--amber-bg);font-weight:800;}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(26,32,58,.55);backdrop-filter:blur(6px);z-index:600;display:none;align-items:flex-start;justify-content:center;padding:14px;overflow-y:auto;}
+.overlay.open{display:flex;animation:fadeIn .18s ease;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);width:100%;box-shadow:0 16px 48px rgba(0,0,0,.15);animation:slideUp .2s ease;margin:auto;}
+.modal-sm{max-width:500px;}.modal-md{max-width:720px;}.modal-lg{max-width:960px;}.modal-fs{max-width:1280px;}
+.mhead{display:flex;align-items:flex-start;justify-content:space-between;padding:17px 22px 13px;border-bottom:1px solid var(--border);gap:12px;}
+.mhead-title{font-family:var(--font-d);font-size:18px;font-weight:800;margin-bottom:2px;}
+.mhead-sub{font-size:11px;color:var(--text3);}
+.xbtn{width:28px;height:28px;border-radius:7px;background:var(--surface2);border:none;color:var(--text3);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+.xbtn:hover{background:var(--red-bg);color:var(--red);}
+.mbody{padding:18px 22px;}
+.mfoot{padding:12px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.fgrid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px;}
+.fg{display:flex;flex-direction:column;gap:4px;}
+.fl{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;}
+.fl em{color:var(--red);font-style:normal;}
+.fi,.fs,.fta{padding:8px 10px;border:1px solid var(--border);border-radius:var(--r);font-family:var(--font);font-size:12px;background:var(--surface2);color:var(--text);outline:none;transition:border-color .2s;}
+.fi:focus,.fs:focus,.fta:focus{border-color:var(--solar);background:var(--surface3);}
+.fi::placeholder{color:var(--text3);}
+.fta{resize:vertical;min-height:52px;}
+.sec{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.3px;color:var(--text3);padding:10px 0 4px;border-bottom:1px solid var(--border);margin-bottom:2px;grid-column:span 2;}
+.sec3{grid-column:span 3;}
+.col2{grid-column:span 2;}.col3{grid-column:span 3;}
+
+/* TRACKING MODAL */
+.trk-info{display:flex;flex-wrap:wrap;gap:7px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:10px 13px;margin-bottom:13px;}
+.ti-i{display:flex;flex-direction:column;gap:1px;min-width:85px;}
+.ti-l{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);}
+.ti-v{font-size:11px;font-weight:600;color:var(--text);}
+.trk-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;}
+.trk-stage{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r);padding:12px;transition:border-color .2s;}
+.trk-stage.st-done{border-color:var(--green);background:rgba(34,211,160,.03);}
+.trk-stage.st-pending{border-color:var(--amber);background:rgba(245,158,11,.03);}
+.trk-stage.st-failed{border-color:var(--red);background:rgba(240,82,82,.03);}
+.trk-stage.st-cash{border-color:var(--teal);background:rgba(20,184,166,.05);}
+.trk-stage.st-loan_approved{border-color:var(--green);background:rgba(34,211,160,.06);}
+.trk-stage.st-loan_pending{border-color:var(--amber);background:rgba(245,158,11,.04);}
+.trk-stage.st-approval_pending{border-color:#f97316;background:rgba(249,115,22,.04);}
+.trk-stage.st-loan_status_card{grid-column:1/-1;border-color:var(--solar);background:rgba(245,166,35,.04);}
+.lsbtn{padding:5px 14px;border-radius:6px;font-family:var(--font);font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid transparent;transition:all .12s;}
+.lsbtn-cash{border-color:var(--teal);color:var(--teal);}
+.lsbtn-cash.on,.lsbtn-cash:hover{background:var(--teal);color:#0b0e17;}
+.lsbtn-pending{border-color:var(--amber);color:var(--amber);}
+.lsbtn-pending.on,.lsbtn-pending:hover{background:var(--amber);color:#0b0e17;}
+.lsbtn-approval{border-color:#f97316;color:#f97316;}
+.lsbtn-approval.on,.lsbtn-approval:hover{background:#f97316;color:#fff;}
+.lsbtn-approved{border-color:var(--green);color:var(--green);}
+.lsbtn-approved.on,.lsbtn-approved:hover{background:var(--green);color:#0b0e17;}
+.lsbtn-na{border-color:var(--border2);color:var(--text3);}
+.lsbtn-na.on,.lsbtn-na:hover{background:var(--border2);color:var(--text);}
+.tsh{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.tsn{font-size:11px;font-weight:700;display:flex;align-items:center;gap:4px;}
+.trk-btns{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:8px;}
+.stbtn{padding:3px 8px;border-radius:5px;font-family:var(--font);font-size:10px;font-weight:700;cursor:pointer;border:1.5px solid transparent;transition:all .12s;}
+.stbtn-done{border-color:var(--green);color:var(--green);}
+.stbtn-done.on,.stbtn-done:hover{background:var(--green);color:#0b0e17;}
+.stbtn-pending{border-color:var(--amber);color:var(--amber);}
+.stbtn-pending.on,.stbtn-pending:hover{background:var(--amber);color:#0b0e17;}
+.stbtn-failed{border-color:var(--red);color:var(--red);}
+.stbtn-failed.on,.stbtn-failed:hover{background:var(--red);color:#fff;}
+.stbtn-na{border-color:var(--border2);color:var(--text3);}
+.stbtn-na.on,.stbtn-na:hover{background:var(--border2);color:var(--text);}
+.tdate,.tnote{width:100%;padding:5px 7px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);font-family:var(--font);font-size:10px;outline:none;}
+.tdate{font-family:var(--mono);margin-bottom:5px;}
+.tnote{resize:none;height:38px;margin-top:3px;}
+.tdate:focus,.tnote:focus{border-color:var(--solar);}
+
+/* SETUP */
+.ss{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:13px;margin-bottom:11px;position:relative;}
+.ss-num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--solar);color:#0b0e17;font-weight:800;font-size:10px;margin-bottom:6px;}
+.ss-t{font-weight:700;font-size:12px;margin-bottom:3px;}
+.ss-d{font-size:11px;color:var(--text3);line-height:1.6;}
+.code-blk{background:var(--bg);color:#a8b4cc;border-radius:8px;padding:10px 12px;font-family:var(--mono);font-size:10px;margin-top:7px;overflow-x:auto;line-height:1.7;white-space:pre;border:1px solid var(--border);}
+.copy-btn{position:absolute;top:9px;right:9px;padding:2px 8px;font-size:10px;font-family:var(--font);font-weight:700;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);border-radius:5px;cursor:pointer;}
+.copy-btn:hover{color:#fff;background:rgba(255,255,255,.12);}
+
+/* TOAST */
+.toast-wrap{position:fixed;bottom:18px;right:18px;z-index:9999;display:flex;flex-direction:column;gap:6px;}
+.toast{display:flex;align-items:center;gap:7px;padding:9px 13px;border-radius:var(--r);font-size:12px;font-weight:500;max-width:280px;animation:slideUp .2s ease;box-shadow:0 8px 24px rgba(0,0,0,.12);}
+.t-s{background:#059669;color:#fff;}.t-e{background:var(--red);color:#fff;}.t-i{background:var(--blue);color:#fff;}
+.empty{text-align:center;padding:44px 20px;}
+.empty-ico{font-size:34px;margin-bottom:7px;}
+.empty-t{font-size:13px;font-weight:700;margin-bottom:3px;}
+.empty-s{font-size:11px;color:var(--text3);}
+
+@media(max-width:1100px){.dash-stats{grid-template-columns:repeat(3,1fr)}.trk-sum{grid-template-columns:repeat(4,1fr)}.trk-grid{grid-template-columns:repeat(2,1fr)}.d3{grid-template-columns:1fr}}
+
+/* FILE UPLOAD */
+.upload-wrap{display:flex;gap:6px;align-items:center;}
+.upload-wrap .fi{flex:1;min-width:0;}
+.upload-btn{padding:7px 10px;border-radius:var(--r);border:1px dashed var(--border2);background:var(--surface2);color:var(--text3);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:4px;font-family:var(--font);}
+.upload-btn:hover{border-color:var(--solar);color:var(--solar);background:var(--solar-glow);}
+.link-btn{padding:7px 10px;border-radius:var(--r);border:1px solid var(--border);background:var(--surface2);color:var(--text3);font-size:13px;cursor:pointer;transition:all .2s;text-decoration:none;display:flex;align-items:center;flex-shrink:0;}
+.link-btn:hover{border-color:var(--solar);color:var(--solar);}
+.link-btn.disabled{opacity:.35;pointer-events:none;}
+.upload-prog{display:none;font-size:10px;color:var(--text3);margin-top:3px;align-items:center;gap:6px;}
+.upload-prog.show{display:flex;}
+.prog-bar{flex:1;height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--solar),var(--green));border-radius:2px;transition:width .3s;}
+
+/* CUSTOMER DETAIL VIEW */
+.cdv-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:14px;}
+.cdv-item{padding:11px 14px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);}
+.cdv-item:nth-child(3n){border-right:none;}
+.cdv-item:nth-last-child(-n+3){border-bottom:none;}
+.cdv-item.full{grid-column:span 3;border-right:none;}
+.cdv-item.half{grid-column:span 1;}
+.cdv-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);margin-bottom:3px;}
+.cdv-val{font-size:13px;font-weight:600;color:var(--text);word-break:break-word;}
+.cdv-val.empty{color:var(--text3);font-weight:400;font-style:italic;}
+.cdv-sec{background:var(--surface2);padding:8px 14px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text3);grid-column:span 3;border-bottom:1px solid var(--border);}
+.cdv-pay-bar{margin-bottom:14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:13px 16px;}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">
+    <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCABcAFwDASIAAhEBAxEB/8QAGgABAAMBAQEAAAAAAAAAAAAAAAQFBwYDCP/EADIQAAEDAwMDAgQFBAMAAAAAAAECAwQABREGEiETMUEHFCJRYXEVIzKBkRZSYqFyotH/xAAaAQEAAwEBAQAAAAAAAAAAAAAAAwQFAgEG/8QAMBEAAQMDAwIEAwkBAAAAAAAAAQACEQMEIQUSMRNBBnGBoTJRkRQiM0JhscHR8PH/2gAMAwEAAhEDEQA/APjKlKURKUpREpSlESlKURKUpREpSlESlKURKUpREpV3a9PKns9T8ZssXnG2RMCFfxg1GuVnkW/KnZEF5sHuxMbWT9gDn/VSdJ+3dGFF1qe7bOVW0q1l2aQ1HQ+1Dum1WPiehFCMHyFAnP8AFeMu2lkpLUyJLQpQQCys7sn/AAUAv/rXJY4chdCo13BUJKFqG5KFEZxnHGa9H4z7C3UutlJaXsX9D8q+iNBaSs9wtzkNEO3LukopMm2pmlLJVHUSmfswFIG5zp9HaP1ZwEnm+1l6ftRH3X5Ea1gKXLmxDIURDVLfUcqeON2GmxlCUgjKMHjNfP3Ov0be46DxB/38/wBrRp2LqlLqtMhfKdKstQRLdCmBm3XP8RQB8boaKBn6Zqtrca4OEhUSISr2VYl2dmFI1BFnxm5jZcZQlCQVJBxnlWR+4FUVfWGptPW4yI2u9QwzOZtNlRsg7NwU/kqKtvYnBAwfPJHFZuoaq2wfTDhIdP1xA9SVoWWnm8Y8tMFsfTMn0AWL2nVOg7YwhqPYpKyO7jkZtSvrklZJ+3b5VOj6t0RcH0sJ0q44858CGxDbWpZ8Ywe9WUK3aXhabPqnq2zNSTcpRRCs8NoNRm+4GR54So/LjkEnjso9q0Z7fROqdL2dm3+8vaGgrBC9qm3ypKsk+QOPkABV2t41qW7djaeMjDW7dwBJHtzCz6fg+nXfvc8yYPxGYJgH3WK63bfi6jds1/tMHT5jpC1swYra15KdyQVAjOQoDvj6E1PizPTBtkR3bbc3yk/C+slJV/yCVc/titE1npC2XX1J1drDUWVWe1oazBbX+dIUmI2R2I+H9PkZz4GTUM/0ZfdFva9selY8CVYJQJiKQkNSANpIWAMKGDnwQfnmqlv4mDWtqGnuLtsmAQHOAgZP69hjurdx4dLpZ1C0NmACQSAcnHl3OVymobauy3eDED120ow/HMhUmbIcC3UA42hpOSk58KwfoPMaUNJRG5T9t1V7tzlwom21L6nVY4G5aRzn/wBrYvU+0wde6ytOmXYiYyIkYXKbOOPcBknZ0E8cZUSTnOODjjBq/T9PpdrGbMttv0W1m2RsoW4kBT6e3jknPlWTz3qKj4vb9nNapRkxJj8oJgdwM/8AV7V8KHrCkyrA4Ex94jJ5aTjz8lkSG4iYLk2RKtz6tvXQzClqZVG3AZSlCklJ8dvI711ti9WNbWZcH3838Qiw3SssSWkPhSMFtX5wVvICT2JIz9KmWyxaL096U2+bcoKJ131KDGZeU3uMYrBGUhRwnpnByOSfkDXnF0XpqF68xNLiCZVsVCypDqiSpfSOVHtzkfbPaoLvULO7a8VachoccgZ24dHrhd0NMuKJbtf8RaOeN3AP7rO/UK+z75ey7Lu12uCEp+D37mVN9+ABwB9q5qrXV7TTGrLuwwMNNznkIGeyQsgVVVs0A0UmhvEKnUncZStyR6tXVzVVtuzembuYAg+1kxA6VddfJStJ2eP5IJFYbXRG62/blFsj46jSilSGz8KVLKk/uCgHGCdvJPmO4saF3HWbMT78qSjeVrb8IxMey0Cz+oEWDFutlnaBkStPyXBIhwVKIEfJyRynBBVkg44+vapl89VTcU2VuJoaXHRaJ6JpQHSRhKVJAGEDGd3kHtxWbIudpUlDTlqbQx1ipwJW2pZbLaU43kbt24FXcDJORzxaWa56eTLbdlWxtCfcF7ahTKgQWtpbIWvBSFncNwOMYx3qqdCsnP3lufN3ygnnkjk8lTN1i6a3aHY8h5xx7cLbtK6qYm6R1lqqZaw0p+S4BbZkra4vpRGkYIIz8WCOB8x4rMda64lXLSrmnNL6KdsttXzK2xyT3zgYThOT3J5rnbc9Zk3r3q24iYym30qbWmKrkuqUghKyoA4KR+ngDg45HlaptvjwITEm3WtSo7a975DLqlrLmcKT1U707cjKjwSNoGMmO30C1oVTUicgjmBAAHfMfMqStrNerT2TGCDxJkye2PRdXePUi+O62teqLZpifDDML2S2VrWtMlJySMhIxzz5PFXUH1agWd6S/bPS92KqWrMw+4Unf34JDfPc/L7VnIulgafZcj2NhLYQUuJddadPKCOMnnBCDkjg7uOar3JdsWqC6La2OgFF8dVodUlCcYGP79x5B747fCJKmg2L2hpZgCOSMTOYOfVcs1i7aSQ7nPA54xjHor3VWp5N30fpywxLDcIjtm56qllYWccEDaMfP/Vduz6txFXJi8yfTZaroAEplpeOQnyBlGSP3rJV3GGhRcYtcRpxfU6gIS4gZB2bQrOMZGcd8D7VEiS2mEYTGjuKVGWyvqoSoBRUSFjPYgY5+ldVtHtKrQ17cCe5HxZPB7rmlqVxTJc13y7Dtx27L01W85L1DOnLiPRUyn1vIbdSUqCVKJFVdTr3JjypnWjMpaSU4ICAnsTjhJxwMDjGcZ81BrQa0MAaOyplxcZPdKUpXq8SlKURKUpREpSlESlKURKUpREpSlESlKURKUpREpSlESlKURKUpRF//9k=" alt="Kalptaru">
+    <div class="logo-info">
+      <div class="logo-name">KalptaruCRM</div>
+      <div class="logo-sub">Renewable Power Pvt. Ltd.</div>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">📊 Dashboard</button>
+    <button class="tab-btn" data-tab="customers" onclick="switchTab('customers')">👥 Customer Data</button>
+    <button class="tab-btn" data-tab="tracking" onclick="switchTab('tracking')">🔄 Tracking System</button>
+    <button class="tab-btn" data-tab="payment" onclick="switchTab('payment')">💰 Payment System</button>
+    <button class="tab-btn" data-tab="cancelled" onclick="switchTab('cancelled')" id="cancelledTabBtn">🚫 Cancelled Orders</button>
+  </div>
+  <div class="hright">
+    <div class="spill" onclick="openSetup()"><div class="sdot" id="sdot"></div><span id="sheetsLbl">Connect Sheets</span></div>
+    <div id="syncControls" style="display:none;align-items:center;gap:6px">
+      <span id="lastSyncLbl" style="font-size:10px;color:var(--text3);white-space:nowrap">Never synced</span>
+      <button class="btn btn-outline btn-sm" id="pullBtn" onclick="pullFromSheets()" title="Pull latest data from Google Sheets → CRM">⬇ Pull</button>
+      <button class="btn btn-sm" id="undoPullBtn" onclick="undoPull()" title="Undo last pull — restore your previous data" style="display:none;background:rgba(240,82,82,.15);color:var(--red);border:1px solid var(--red);font-size:10px;padding:3px 8px;border-radius:6px;cursor:pointer">↩ Undo Pull</button>
+      <button class="btn btn-outline btn-sm" id="pushBtn" onclick="pushToSheets()" title="Push all CRM data → Google Sheets">⬆ Push</button>
+      <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text3)">
+        <label style="cursor:pointer;display:flex;align-items:center;gap:4px">
+          <input type="checkbox" id="autoSyncChk" onchange="toggleAutoSync(this.checked)" style="cursor:pointer">
+          Auto
+        </label>
+      </div>
+    </div>
+    <button class="btn btn-outline btn-sm" onclick="exportFiltered()" id="exportBtn">⬇ Export</button>
+    <button class="btn btn-solar" id="mainAddBtn" onclick="openAddCust()">+ Add Customer</button>
+  </div>
+</div>
+
+<div class="page-wrap">
+
+<!-- ══════ TAB: DASHBOARD ══════ -->
+<div class="tab-page active" id="tab-dashboard">
+  <div class="flt-bar" style="justify-content:space-between;align-items:flex-end">
+    <div style="display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap">
+      <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);align-self:center;">🔍 Filter</span>
+      <div><div class="flt-lbl">Year</div><select class="flt-sel" id="dYear" onchange="renderDash()" style="min-width:80px"><option>2023</option><option>2024</option><option selected>2025</option><option>2026</option></select></div>
+      <div><div class="flt-lbl">Month</div>
+        <div class="mpk-wrap" id="mpk-dash">
+          <button class="mpk-btn" id="mpk-dash-btn" onclick="toggleMpk('dash')">All Months</button>
+          <div class="mpk-drop" id="mpk-dash-drop"></div>
+        </div>
+      </div>
+      <div><div class="flt-lbl">Seller</div><select class="flt-sel" id="dSeller" onchange="renderDash()" style="min-width:150px"><option value="">All Sellers</option></select></div>
+      <div><div class="flt-lbl">Capacity (kW)</div><select class="flt-sel" id="dCap" onchange="renderDash()"><option value="">All</option></select></div>
+      <button class="btn btn-ghost btn-sm" onclick="clearDashF()" style="align-self:flex-end">✕ Clear</button>
+    </div>
+    <div id="dashGreeting" style="text-align:right;flex-shrink:0;padding-left:16px"></div>
+  </div>
+  <div class="dash-stats" id="dashStats"></div>
+  <div class="dash-grid d3" style="margin-bottom:13px">
+    <div class="dash-card"><div class="dct">⚡ Capacity Wise kW <span>total kW per size</span></div><div class="bar-chart" id="capChart"></div></div>
+    <div class="dash-card"><div class="dct">🏪 Seller kW — Total vs Order-ID <span>orange=all · green=w/ order ID</span></div><div id="sellerChart"></div></div>
+    <div class="dash-card"><div class="dct">🔄 Stage Completion <span>kW done</span></div><div class="sg-grid" id="stageGrid"></div></div>
+  </div>
+  <div class="dash-grid d2" style="margin-bottom:13px">
+    <div class="dash-card"><div class="dct">📅 Monthly Report <span id="mthTitle">months with data</span></div><div style="overflow-x:auto"><table class="mtable" id="monthTable"></table></div></div>
+    <div class="dash-card"><div class="dct">📊 Status Breakdown <span>kW distribution</span></div><div id="statusBars"></div></div>
+  </div>
+  <div class="dash-card">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:11px">
+      <div class="dct" style="margin-bottom:0">💰 Customer Payment Summary <span>final amount · received · balance</span></div>
+      <div style="display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap">
+        <div class="sbox" style="max-width:260px">
+          <span class="sbox-icon"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></span>
+          <input class="sinp" id="payDashSearch" placeholder="Search name, Order ID, FVR ID…" oninput="renderPayDashTable(getDashBase())">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3)">Seller</span>
+          <select class="flt-sel" id="pdSeller" onchange="renderPayDashTable(getDashBase())" style="min-width:130px"><option value="">All Sellers</option></select>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3)">Balance</span>
+          <select class="flt-sel" id="pdBalance" onchange="renderPayDashTable(getDashBase())" style="min-width:120px">
+            <option value="">All</option>
+            <option value="pending">Pending Balance</option>
+            <option value="clear">Fully Paid</option>
+            <option value="excess">Excess Paid</option>
+          </select>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3)">Sort By</span>
+          <select class="flt-sel" id="pdSort" onchange="renderPayDashTable(getDashBase())" style="min-width:160px">
+            <option value="">Default</option>
+            <option value="bal_desc">Balance ↓ Largest First</option>
+            <option value="bal_asc">Balance ↑ Smallest First</option>
+            <option value="final_desc">Final Amount ↓</option>
+            <option value="final_asc">Final Amount ↑</option>
+            <option value="recv_desc">Received ↓</option>
+            <option value="recv_asc">Received ↑</option>
+            <option value="name_asc">Name A → Z</option>
+            <option value="name_desc">Name Z → A</option>
+            <option value="kw_desc">kW ↓ Largest</option>
+            <option value="kw_asc">kW ↑ Smallest</option>
+          </select>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="clearPayDashF()" style="align-self:flex-end">✕ Clear</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto"><table class="pdtable" id="payDashTable">
+      <thead><tr><th>Order ID</th><th>FVR ID</th><th>Customer / Seller</th><th>kW</th><th>Final Amount</th><th>Received</th><th>Balance</th><th>Progress</th></tr></thead>
+      <tbody id="payDashBody"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══════ TAB: CUSTOMER DATA ══════ -->
+<div class="tab-page" id="tab-customers">
+  <div class="flt-bar" style="align-items:flex-end">
+    <div class="sbox" style="flex:1;min-width:200px;align-self:flex-end">
+      <span class="sbox-icon"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></span>
+      <input class="sinp" id="custSearch" placeholder="Search name, Order ID, FVR ID, mobile…" oninput="renderCustTable()">
+    </div>
+    <div><div class="flt-lbl">Seller</div><select class="flt-sel" id="qcSeller" onchange="setTabF('cust','seller',this.value)" style="min-width:120px"><option value="">All Sellers</option></select></div>
+    <div><div class="flt-lbl">Capacity</div><select class="flt-sel" id="qcCap" onchange="setTabF('cust','cap',this.value)"><option value="">All kW</option></select></div>
+    <div><div class="flt-lbl">Status</div><select class="flt-sel" id="qcStatus" onchange="setTabF('cust','status',this.value)"><option value="">All Status</option><option>Active</option><option>On Hold</option><option>Completed</option><option>Cancelled</option></select></div>
+    <div><div class="flt-lbl">Year</div><select class="flt-sel" id="qcYear" onchange="setTabF('cust','year',this.value)" style="min-width:72px"><option value="">All Years</option></select></div>
+    <div><div class="flt-lbl">Month</div><div class="mpk-wrap" id="mpk-cust"><button class="mpk-btn" id="mpk-cust-btn" onclick="toggleMpk('cust')">All Months</button><div class="mpk-drop" id="mpk-cust-drop"></div></div></div>
+    <button class="btn btn-ghost btn-sm" onclick="clearAllCF('cust')" id="clrCust2" style="display:none">✕ Clear</button>
+    <button class="btn btn-sm" onclick="exportFiltered('customers')" style="background:rgba(34,211,160,.1);color:var(--green);border:1px solid var(--green);font-size:11px;font-weight:700;border-radius:7px;padding:5px 12px;cursor:pointer" title="Export current filtered/sorted rows">⬇ Export View</button>
+  </div>
+  <div class="table-card">
+    <div class="tc-head">
+      <div>
+        <div class="tc-title">Customer Records</div>
+        <div style="display:flex;gap:11px;margin-top:2px"><span class="tc-count" id="custCount">—</span><span class="tc-kw" id="custKw">— kW</span></div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="clearAllCF('cust')" id="clrCust" style="display:none">✕ Clear Filters</button>
+    </div>
+    <div class="tbl-outer">
+      <table class="excel-tbl" id="custTable"><thead><tr id="custThead"></tr></thead><tbody id="custTbody"></tbody><tfoot><tr id="custTfoot"></tr></tfoot></table>
+      <div class="empty" id="custEmpty" style="display:none"><div class="empty-ico">☀️</div><div class="empty-t">No customers</div><div class="empty-s">Add first customer</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ TAB: TRACKING SYSTEM ══════ -->
+<div class="tab-page" id="tab-tracking">
+  <div class="trk-sum" id="trkSum"></div>
+  <div class="flt-bar" style="align-items:flex-end">
+    <div class="sbox" style="flex:1;min-width:200px;align-self:flex-end">
+      <span class="sbox-icon"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></span>
+      <input class="sinp" id="trackSearch" placeholder="Search name, Order ID, FVR ID…" oninput="renderTrackTable()">
+    </div>
+    <div><div class="flt-lbl">Seller</div><select class="flt-sel" id="qtSeller" onchange="setTabF('track','seller',this.value)" style="min-width:120px"><option value="">All Sellers</option></select></div>
+    <div><div class="flt-lbl">Capacity</div><select class="flt-sel" id="qtCap" onchange="setTabF('track','cap',this.value)"><option value="">All kW</option></select></div>
+    <div><div class="flt-lbl">Final Status</div><select class="flt-sel" id="qtFinal" onchange="setTabF('track','final',this.value)"><option value="">All Status</option><option>Complete</option><option>In Progress</option><option>Pending</option><option>Blocked</option></select></div>
+    <button class="btn btn-ghost btn-sm" onclick="clearAllCF('track')" id="clrTrack" style="display:none">✕ Clear</button>
+    <button class="btn btn-sm" onclick="exportFiltered('tracking')" style="background:rgba(34,211,160,.1);color:var(--green);border:1px solid var(--green);font-size:11px;font-weight:700;border-radius:7px;padding:5px 12px;cursor:pointer" title="Export current filtered/sorted rows">⬇ Export View</button>
+  </div>
+  <div class="table-card">
+    <div class="tc-head">
+      <div><div class="tc-title">Order Tracking</div><div style="display:flex;gap:11px;margin-top:2px"><span class="tc-count" id="trackCount">—</span><span class="tc-kw" id="trackKw">— kW</span></div></div>
+      <span style="font-size:11px;color:var(--text3)">Click row to edit stages</span>
+    </div>
+    <div class="tbl-outer">
+      <table class="excel-tbl" id="trackTable"><thead><tr id="trackThead"></tr></thead><tbody id="trackTbody"></tbody><tfoot><tr id="trackTfoot"></tr></tfoot></table>
+      <div class="empty" id="trackEmpty" style="display:none"><div class="empty-ico">🔄</div><div class="empty-t">No records</div><div class="empty-s">Add customers first</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ TAB: PAYMENT SYSTEM ══════ -->
+<div class="tab-page" id="tab-payment">
+  <div class="flt-bar" style="align-items:flex-end">
+    <div class="sbox" style="flex:1;min-width:200px;align-self:flex-end">
+      <span class="sbox-icon"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></span>
+      <input class="sinp" id="paySearch" placeholder="Search name, Order ID, FVR ID…" oninput="renderPayTable()">
+    </div>
+    <div><div class="flt-lbl">Seller</div><select class="flt-sel" id="qpSeller" onchange="setTabF('pay','seller',this.value)" style="min-width:120px"><option value="">All Sellers</option></select></div>
+    <div><div class="flt-lbl">Pay Type</div><select class="flt-sel" id="qpType" onchange="setTabF('pay','type',this.value)"><option value="">All Types</option><option>Loan</option><option>Cash</option><option>Cheque</option><option>UPI</option><option>Refund</option><option>Discount</option></select></div>
+    <div><div class="flt-lbl">Year</div><select class="flt-sel" id="qpYear" onchange="setTabF('pay','year',this.value)" style="min-width:72px"><option value="">All Years</option></select></div>
+    <div><div class="flt-lbl">Month</div><div class="mpk-wrap" id="mpk-pay"><button class="mpk-btn" id="mpk-pay-btn" onclick="toggleMpk('pay')">All Months</button><div class="mpk-drop" id="mpk-pay-drop"></div></div></div>
+    <button class="btn btn-ghost btn-sm" onclick="clearAllCF('pay')" id="clrPay" style="display:none">✕ Clear</button>
+    <button class="btn btn-teal" onclick="openAddPay()">+ Add Payment</button>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:13px" id="payStats"></div>
+  <div class="table-card">
+    <div class="tc-head">
+      <div><div class="tc-title">Payment Records</div><div style="display:flex;gap:11px;margin-top:2px"><span class="tc-count" id="payCount">—</span><span id="payTotal" style="font-size:11px;font-weight:700;color:var(--green)">—</span></div></div>
+    </div>
+    <div class="tbl-outer">
+      <table class="excel-tbl" id="payTable"><thead><tr id="payThead"></tr></thead><tbody id="payTbody"></tbody><tfoot><tr id="payTfoot"></tr></tfoot></table>
+      <div class="empty" id="payEmpty" style="display:none"><div class="empty-ico">💰</div><div class="empty-t">No payments</div><div class="empty-s">Add the first payment</div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════ TAB: CANCELLED ORDERS ══════ -->
+<div class="tab-page" id="tab-cancelled">
+  <div class="flt-bar" style="align-items:flex-end">
+    <div class="sbox" style="flex:1;min-width:200px;align-self:flex-end">
+      <span class="sbox-icon"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></span>
+      <input class="sinp" id="cancelledSearch" placeholder="Search name, Order ID, FVR ID…" oninput="renderCancelledTable()">
+    </div>
+    <div><div class="flt-lbl">Seller</div><select class="flt-sel" id="qcanSeller" onchange="setTabF('cancelled','seller',this.value)" style="min-width:120px"><option value="">All Sellers</option></select></div>
+    <button class="btn btn-ghost btn-sm" onclick="clearAllCF('cancelled')" id="clrCancelled" style="display:none">✕ Clear</button>
+    <button class="btn btn-sm" onclick="exportFiltered('cancelled')" style="background:rgba(34,211,160,.1);color:var(--green);border:1px solid var(--green);font-size:11px;font-weight:700;border-radius:7px;padding:5px 12px;cursor:pointer">⬇ Export</button>
+  </div>
+  <div class="table-card">
+    <div class="tc-head">
+      <div><div class="tc-title" style="color:var(--red)">🚫 Cancelled Orders</div><div style="display:flex;gap:11px;margin-top:2px"><span class="tc-count" id="cancelledCount">—</span><span class="tc-kw" id="cancelledKw">— kW</span></div></div>
+      <span style="font-size:11px;color:var(--text3)">Removed from Customer Data &amp; Tracking</span>
+    </div>
+    <div class="tbl-outer">
+      <table class="excel-tbl" id="cancelledTable"><thead><tr id="cancelledThead"></tr></thead><tbody id="cancelledTbody"></tbody><tfoot><tr id="cancelledTfoot"></tr></tfoot></table>
+      <div class="empty" id="cancelledEmpty" style="display:none"><div class="empty-ico">🚫</div><div class="empty-t">No cancelled orders</div><div class="empty-s">Mark a customer as Cancelled to move here</div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /page-wrap -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- ══ MODAL: CUSTOMER ══ -->
+<div class="overlay" id="custModal">
+  <div class="modal modal-fs">
+    <div class="mhead"><div><div class="mhead-title" id="custModalTitle">Add Customer</div><div class="mhead-sub">* required fields</div></div><button class="xbtn" onclick="closeModal('custModal')">✕</button></div>
+    <div class="mbody"><div class="fgrid3">
+      <div class="sec sec3">📋 Order Information</div>
+      <div class="fg"><label class="fl">Order ID <small style="font-size:9px;color:var(--text3);font-weight:400">(assigned later)</small></label><input class="fi" id="f_order_id" placeholder="Leave blank if not received yet"></div>
+      <div class="fg"><label class="fl">FVR ID<em>*</em></label><input class="fi" id="f_fvr_id" placeholder="FVR Number"></div>
+      <div class="fg"><label class="fl">Order Date<em>*</em></label><input type="date" class="fi" id="f_order_date"></div>
+      <div class="sec sec3">👤 Customer Details</div>
+      <div class="fg"><label class="fl">Loan Person Name<em>*</em></label><input class="fi" id="f_loan_person" placeholder="Loan applicant"></div>
+      <div class="fg"><label class="fl">Name As Per Documents<em>*</em></label><input class="fi" id="f_name_docs" placeholder="Exact document name"></div>
+      <div class="fg"><label class="fl">Mobile</label><input class="fi" id="f_mobile" placeholder="10-digit"></div>
+      <div class="fg col3"><label class="fl">Address</label><input class="fi" id="f_address" placeholder="Full address"></div>
+      <div class="fg"><label class="fl">Email</label><input type="email" class="fi" id="f_email" placeholder="email@example.com"></div>
+      <div class="fg"><label class="fl">CA Number</label><input class="fi" id="f_ca_number" placeholder="Consumer Account No."></div>
+      <div class="fg"><label class="fl">Sub Division</label><input class="fi" id="f_sub_division" placeholder="Sub Division"></div>
+      <div class="fg"><label class="fl">Customer Type</label><select class="fs" id="f_customer_type"><option value="">Select</option><option>Cash</option><option>Loan</option></select></div>
+      <div class="sec sec3">☀️ Solar & Seller</div>
+      <div class="fg">
+        <label class="fl">Seller Name<em>*</em></label>
+        <div style="display:flex;gap:6px;align-items:center">
+          <select class="fs" id="f_seller_name" style="flex:1">
+            <option value="">— Select Seller —</option>
+          </select>
+          <button type="button" class="btn btn-outline btn-sm" onclick="openSellerMgr()" style="white-space:nowrap;flex-shrink:0" title="Add / Remove sellers">⚙ Manage</button>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">Type of Solar</label><select class="fs" id="f_solar_type"><option value="">Select</option><option>On-Grid</option><option>Off-Grid</option><option>Hybrid</option><option>Mono PERC</option><option>Poly</option></select></div>
+      <div class="fg"><label class="fl">Capacity (kW)<em>*</em></label><input class="fi" id="f_capacity" placeholder="e.g. 3, 5, 10"></div>
+      <div class="sec sec3">💰 Financial</div>
+      <div class="fg"><label class="fl">Final Amount (₹)</label><input type="number" class="fi" id="f_final_amount" placeholder="250000"></div>
+      <div class="fg"><label class="fl">Advance Amount (₹)</label><input type="number" class="fi" id="f_advance_amount" placeholder="50000"></div>
+      <div class="fg"><label class="fl">Work Status</label><select class="fs" id="f_work_status"><option value="">Select</option><option>Active</option><option>On Hold</option><option>Completed</option><option>Cancelled</option></select></div>
+      <div class="sec sec3">📎 Documents</div>
+      <div class="fg col3">
+        <label class="fl">Documents PDF</label>
+        <div class="upload-wrap">
+          <input class="fi" id="f_documents" placeholder="Paste Google Drive link here…" oninput="updateLinkBtn('f_documents')">
+          <button type="button" class="upload-btn" onclick="pasteLink('f_documents')" title="Paste link from clipboard">📋 Paste Link</button>
+          <label class="upload-btn" title="Upload PDF to Google Drive (requires Sheets connected)">
+            📎 Upload
+            <input type="file" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="uploadFileToDrive(this,'f_documents','custUploadProg')">
+          </label>
+          <a class="link-btn" id="f_documents_link" href="#" target="_blank" title="Open link" onclick="return openProofLink('f_documents')">🔗</a>
+        </div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px">💡 <strong>Easy way:</strong> Upload file to Google Drive → right click → Copy link → click 📋 Paste Link above</div>
+        <div class="upload-prog" id="custUploadProg">
+          <div class="prog-bar"><div class="prog-fill" id="custUploadFill" style="width:0%"></div></div>
+          <span id="custUploadLbl">Uploading…</span>
+        </div>
+      </div>
+      <div class="fg col3"><label class="fl">Remarks</label><textarea class="fta" id="f_remarks"></textarea></div>
+    </div></div>
+    <div class="mfoot"><button class="btn btn-ghost" onclick="closeModal('custModal')">Cancel</button><button class="btn btn-solar" id="saveCustBtn" onclick="if(this.disabled)return;this.disabled=true;saveCust();setTimeout(()=>this.disabled=false,1500)">💾 Save Customer</button></div>
+  </div>
+</div>
+
+<!-- ══ MODAL: PAYMENT ══ -->
+<div class="overlay" id="payModal">
+  <div class="modal modal-md">
+    <div class="mhead"><div><div class="mhead-title" id="payModalTitle">Add Payment</div><div class="mhead-sub">FVR ID or Order ID is key</div></div><button class="xbtn" onclick="closeModal('payModal')">✕</button></div>
+    <div class="mbody"><div class="fgrid">
+      <div class="sec col2">🔑 Reference</div>
+      <div class="fg"><label class="fl">FVR ID<em>*</em></label><input class="fi" id="p_fvr_id" placeholder="FVR Number" oninput="autoFillPayCust()"></div>
+      <div class="fg"><label class="fl">Order ID</label><input class="fi" id="p_order_id" placeholder="Order ID (optional)" oninput="autoFillPayCust()"></div>
+      <div class="fg"><label class="fl">Customer Name</label><input class="fi" id="p_cust_name" placeholder="Auto-filled or enter manually"></div>
+      <div class="fg"><label class="fl">Payee Name<em>*</em></label><input class="fi" id="p_payee_name" placeholder="Who is paying"></div>
+      <div class="sec col2">💰 Payment Details</div>
+      <div class="fg"><label class="fl">Date<em>*</em></label><input type="date" class="fi" id="p_date"></div>
+      <div class="fg"><label class="fl">Amount (₹)<em>*</em></label><input type="number" class="fi" id="p_amount" placeholder="0"></div>
+      <div class="fg"><label class="fl">Payment Type<em>*</em></label>
+        <select class="fs" id="p_type"><option value="">Select type</option><option>Loan</option><option>Cash</option><option>Cheque</option><option>UPI</option><option>Refund</option><option>Discount</option></select>
+      </div>
+      <div class="fg col2">
+        <label class="fl">Payment Proof</label>
+        <div class="upload-wrap">
+          <input class="fi" id="p_proof" placeholder="Paste Google Drive link here…" oninput="updateLinkBtn('p_proof')">
+          <button type="button" class="upload-btn" onclick="pasteLink('p_proof')" title="Paste link from clipboard">📋 Paste Link</button>
+          <label class="upload-btn" title="Upload proof to Google Drive (requires Sheets connected)">
+            📎 Upload
+            <input type="file" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="uploadFileToDrive(this,'p_proof','payUploadProg')">
+          </label>
+          <a class="link-btn" id="p_proof_link" href="#" target="_blank" title="Open link" onclick="return openProofLink('p_proof')">🔗</a>
+        </div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px">💡 <strong>Easy way:</strong> Upload to Google Drive → right click → Copy link → click 📋 Paste Link</div>
+        <div class="upload-prog" id="payUploadProg">
+          <div class="prog-bar"><div class="prog-fill" id="payUploadFill" style="width:0%"></div></div>
+          <span id="payUploadLbl">Uploading…</span>
+        </div>
+      </div>
+      <div class="fg col2"><label class="fl">Notes</label><textarea class="fta" id="p_notes" placeholder="Any notes…"></textarea></div>
+    </div></div>
+    <div class="mfoot"><button class="btn btn-ghost" onclick="closeModal('payModal')">Cancel</button><button class="btn btn-teal" id="savePayBtn" onclick="if(this.disabled)return;this.disabled=true;savePay();setTimeout(()=>this.disabled=false,1500)">💾 Save Payment</button></div>
+  </div>
+</div>
+
+
+
+<!-- ══ MODAL: SELLER MANAGER ══ -->
+<div class="overlay" id="sellerMgrModal">
+  <div class="modal modal-sm">
+    <div class="mhead">
+      <div><div class="mhead-title">⚙ Manage Sellers</div><div class="mhead-sub">Add or remove sellers from the dropdown</div></div>
+      <button class="xbtn" onclick="closeModal('sellerMgrModal')">✕</button>
+    </div>
+    <div class="mbody">
+      <div style="display:flex;gap:7px;margin-bottom:13px">
+        <input class="fi" id="newSellerInp" placeholder="New seller name…" style="flex:1" onkeydown="if(event.key==='Enter')addSeller()">
+        <button class="btn btn-solar btn-sm" onclick="addSeller()">+ Add</button>
+      </div>
+      <div id="sellerList" style="display:flex;flex-direction:column;gap:5px;max-height:300px;overflow-y:auto"></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" onclick="closeModal('sellerMgrModal')">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: CUSTOMER DETAIL VIEW ══ -->
+<div class="overlay" id="custViewModal">
+  <div class="modal modal-lg">
+    <div class="mhead">
+      <div>
+        <div class="mhead-title" id="cvTitle">Customer Details</div>
+        <div class="mhead-sub" id="cvSub"></div>
+      </div>
+      <button class="xbtn" onclick="closeModal('custViewModal')">✕</button>
+    </div>
+    <div class="mbody" id="cvBody"></div>
+    <div class="mfoot">
+      <button class="btn btn-danger btn-sm" id="cvDelBtn">🗑 Delete</button>
+      <button class="btn btn-outline btn-sm" onclick="editFromView()">✏️ Edit</button>
+      <button class="btn btn-teal btn-sm" onclick="trackFromView()">📊 View Tracking</button>
+      <button class="btn btn-ghost" onclick="closeModal('custViewModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: TRACKING ══ -->
+<div class="overlay" id="trkModal">
+  <div class="modal modal-fs">
+    <div class="mhead"><div><div class="mhead-title" id="trkTitle">Update Tracking</div><div class="mhead-sub" id="trkSub"></div></div><button class="xbtn" onclick="closeModal('trkModal')">✕</button></div>
+    <div class="mbody"><div class="trk-info" id="trkInfo"></div><div class="trk-grid" id="trkGrid"></div></div>
+    <div class="mfoot"><button class="btn btn-danger btn-sm" id="trkDelBtn">🗑 Delete</button><button class="btn btn-outline btn-sm" onclick="editFromTrk()">✏️ Edit Info</button><span id="trkSaveHint" style="display:none;align-items:center;gap:4px;font-size:11px;color:var(--amber);font-weight:600">⚠ Unsaved changes</span><button class="btn btn-ghost" onclick="closeTrkModal()">Cancel</button><button class="btn btn-solar" onclick="saveTrk()">💾 Save Tracking</button></div>
+  </div>
+</div>
+
+<!-- ══ MODAL: SHEETS SETUP ══ -->
+<div class="overlay" id="setupModal">
+  <div class="modal modal-md">
+    <div class="mhead"><div><div class="mhead-title">🔗 Connect Google Sheets</div><div class="mhead-sub">4 steps — free team storage</div></div><button class="xbtn" onclick="closeModal('setupModal')">✕</button></div>
+    <div class="mbody">
+      <div class="ss"><div class="ss-num">1</div><div class="ss-t">Create Google Sheet</div><div class="ss-d">Go to <strong>sheets.google.com</strong> → New → Name it <strong>KalptaruCRM</strong> → Create 3 tabs: <strong>Customers</strong>, <strong>Tracking</strong>, <strong>Payments</strong></div></div>
+      <div class="ss" style="position:relative">
+        <div class="ss-num">2</div><div class="ss-t">Paste Apps Script</div><div class="ss-d"><strong>Extensions → Apps Script</strong> → Clear all → Paste:</div>
+        <div style="position:relative">
+        <pre class="code-blk" id="appsCode" style="white-space:pre-wrap;font-size:11px;max-height:200px;overflow-y:auto">var _auth = DriveApp.getRootFolder();
+const SS = SpreadsheetApp.getActiveSpreadsheet();
+
+function authorize() {
+  DriveApp.getRootFolder();
+  SpreadsheetApp.getActiveSpreadsheet();
+  Logger.log('Authorization complete!');
+}
+
+function doPost(e) {
+  try {
+    const d = JSON.parse(e.postData.contents);
+    return handle(d);
+  } catch(err) {
+    return out({ok:false, error:err.toString()});
+  }
+}
+
+function doGet(e) {
+  try {
+    const payload = e.parameter && e.parameter.payload;
+    if (payload) {
+      return handle(JSON.parse(decodeURIComponent(payload)));
+    }
+    return out({ok:true, status:'KalptaruCRM running'});
+  } catch(err) {
+    return out({ok:false, error:err.toString()});
+  }
+}
+
+function handle(d) {
+  if (d.action === 'save') {
+    const sh = SS.getSheetByName(d.tab) || SS.insertSheet(d.tab);
+    // Always keep header row up to date with current schema
+    if (sh.getLastRow() === 0) {
+      sh.appendRow(d.headers);
+    } else {
+      sh.getRange(1, 1, 1, d.headers.length).setValues([d.headers]);
+    }
+    // Match key: Customers → FVR ID (col 2, never blank), others → col 1
+    const keyCol = (d.tab === 'Customers') ? 2 : 1;
+    const keyVal = (d.tab === 'Customers') ? d.row[1] : d.row[0]; // FVR is index 1
+    const lastRow = sh.getLastRow();
+    let found = -1;
+    if (lastRow > 1 && keyVal) {
+      const colVals = sh.getRange(2, keyCol, lastRow - 1, 1).getValues().flat();
+      const idx = colVals.findIndex(v => String(v).trim().toUpperCase() === String(keyVal).trim().toUpperCase());
+      if (idx >= 0) found = idx + 2; // +2: 1-indexed + skip header
+    }
+    if (found > 0) sh.getRange(found, 1, 1, d.row.length).setValues([d.row]);
+    else sh.appendRow(d.row);
+    return out({ok:true});
+  }
+  if (d.action === 'clearSheet') {
+    // Used by Push All — clears data rows but keeps sheet, then re-inserts header
+    const sh = SS.getSheetByName(d.tab) || SS.insertSheet(d.tab);
+    sh.clearContents();
+    sh.appendRow(d.headers);
+    return out({ok:true});
+  }
+  if (d.action === 'delete') {
+    const sh = SS.getSheetByName(d.tab);
+    if (sh && sh.getLastRow() > 1) {
+      const keyCol = (d.tab === 'Customers') ? 2 : 1;
+      const colVals = sh.getRange(2, keyCol, sh.getLastRow() - 1, 1).getValues().flat();
+      const idx = colVals.findIndex(v => String(v).trim().toUpperCase() === String(d.id).trim().toUpperCase());
+      if (idx >= 0) sh.deleteRow(idx + 2); // +2: 1-indexed + skip header
+    }
+    return out({ok:true});
+  }
+  if (d.action === 'load') {
+    const sh = SS.getSheetByName(d.tab);
+    if (!sh || sh.getLastRow() < 2) return out({rows:[]});
+    return out({rows: sh.getRange(2,1,sh.getLastRow()-1,sh.getLastColumn()).getValues()});
+  }
+  if (d.action === 'uploadFile') {
+    try {
+      const folder = getOrCreateFolder('KalptaruCRM_Files');
+      const blob = Utilities.newBlob(Utilities.base64Decode(d.data), d.mimeType, d.filename);
+      const file = folder.createFile(blob);
+      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      return out({ok:true, url:'https://drive.google.com/file/d/'+file.getId()+'/view'});
+    } catch(err) {
+      return out({ok:false, error:err.toString()});
+    }
+  }
+  return out({ok:true});
+}
+
+function getOrCreateFolder(name) {
+  const folders = DriveApp.getFoldersByName(name);
+  return folders.hasNext() ? folders.next() : DriveApp.createFolder(name);
+}
+
+function out(data) {
+  return ContentService
+    .createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON);
+}</pre>
+        <button class="copy-btn" id="copyScriptBtn" onclick="copyCode()" style="position:absolute;top:8px;right:8px">📋 Copy Script</button>
+        </div>
+      </div>
+      <div class="ss"><div class="ss-num">3</div><div class="ss-t">Deploy as Web App</div><div class="ss-d"><strong>Deploy → New Deployment → Web App</strong><br>Execute as: <strong>Me</strong> | Access: <strong>Anyone</strong> → Copy URL<br><span style="color:var(--solar);font-size:11px;font-weight:600">⚡ This also enables PDF/image upload directly to Google Drive</span></div></div>
+      <div class="ss"><div class="ss-num">4</div><div class="ss-t">Paste URL</div><input class="fi" id="sheetsUrlInp" placeholder="https://script.google.com/macros/s/…/exec" style="margin-top:8px;width:100%"></div>
+      <div class="ss"><div class="ss-num">5</div><div class="ss-t">Your Name</div><input class="fi" id="usernameInp" placeholder="e.g. Jatin" style="margin-top:8px;width:100%;max-width:260px" maxlength="40"></div>
+      <div style="margin-top:14px;padding:12px 14px;background:rgba(232,116,0,.07);border:1px solid rgba(232,116,0,.25);border-radius:10px">
+        <div style="font-size:11px;font-weight:800;color:var(--solar);margin-bottom:8px">☁️ Direct File Upload (Free — No Permission Issues)</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:10px">Use <strong>Cloudinary</strong> for direct PDF/photo upload — free forever, no Google permission needed.</div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:8px">1. Go to <strong>cloudinary.com</strong> → Sign up free (use Google account)<br>2. Dashboard → copy your <strong>Cloud Name</strong><br>3. Settings → Upload → scroll down → <strong>Add upload preset</strong> → Signing Mode: <strong>Unsigned</strong> → Save → copy preset name</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div style="flex:1;min-width:140px"><div class="flt-lbl" style="margin-bottom:3px">Cloud Name</div><input class="fi" id="cloudinaryCloud" placeholder="e.g. dxy1abc23" style="width:100%"></div>
+          <div style="flex:1;min-width:140px"><div class="flt-lbl" style="margin-bottom:3px">Upload Preset</div><input class="fi" id="cloudinaryPreset" placeholder="e.g. kalptaru_upload" style="width:100%"></div>
+        </div>
+        <div style="margin-top:8px;font-size:10px;color:var(--text3)">After saving these, the 📎 Upload button will work directly — no Apps Script needed.</div>
+      </div>
+    </div>
+    <div class="mfoot"><button class="btn btn-ghost" onclick="closeModal('setupModal')">Cancel</button><button class="btn btn-solar" onclick="connectSheets()">✅ Connect & Sync</button></div>
+  </div>
+</div>
+<script>
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let customers=[], tracking={}, payments=[], cancelledCustomers=[];
+let sellers=JSON.parse(localStorage.getItem('kcrm_sellers')||'[]');
+let sheetsUrl=localStorage.getItem('kcrm_url')||'';
+let cloudinaryCloud=localStorage.getItem('kcrm_cloud')||'';
+let cloudinaryPreset=localStorage.getItem('kcrm_preset')||'';
+let editingCustId=null, trkEditId=null, editingPayId=null;
+let colFilters={cust:{},track:{},pay:{},cancelled:{}};
+let tabFilters={
+  cust:{seller:'',cap:'',status:'',year:'',months:new Set()},
+  track:{seller:'',cap:'',final:''},
+  pay:{seller:'',type:'',year:'',months:new Set()},
+  cancelled:{seller:''}
+};
+// Dashboard multi-month state
+let dashMonths=new Set();
+let colSort={cust:{key:null,dir:null},track:{key:null,dir:null},pay:{key:null,dir:null},cancelled:{key:null,dir:null}};
+let payDashSort={key:null,dir:null};
+let openDd=null;
+
+function closeDd(){if(openDd){try{openDd.remove();}catch(e){}openDd=null;}}
+
+function cfdToggle(key,tbl,val,chk){
+  if(!colFilters[tbl][key])colFilters[tbl][key]=new Set(allValsFor(key,tbl).map(String));
+  if(chk)colFilters[tbl][key].add(String(val));
+  else colFilters[tbl][key].delete(String(val));
+  if(tbl==='cust')renderCustTable();
+  else if(tbl==='track')renderTrackTable();
+  else renderPayTable();
+}
+
+const CUST_FIELDS=['order_id','fvr_id','order_date','loan_person','name_docs','address','mobile','email','ca_number','sub_division','customer_type','seller_name','solar_type','capacity','final_amount','advance_amount','documents','remarks','work_status'];
+const PAY_FIELDS=['pay_id','fvr_id','order_id','cust_name','payee_name','date','amount','type','proof','notes'];
+const TRK_HDR=['order_id','bill1_billno',...['bill1','namechange','sanction','loan','dispatch','meter','filesubmit','bill2'].flatMap(k=>[k+'_status',k+'_date',k+'_note']),'bill2_billno','final_status','loan_type'];
+
+const STAGES=[
+  {key:'bill1',label:'Bill 1 Made',icon:'🧾'},
+  {key:'namechange',label:'Name Change',icon:'📝'},
+  {key:'sanction',label:'Sanction Load',icon:'⚡'},
+  {key:'loan',label:'Loan Disbursed',icon:'🏦'},
+  {key:'dispatch',label:'Material Dispatch',icon:'📦'},
+  {key:'meter',label:'Meter Status',icon:'📊'},
+  {key:'filesubmit',label:'File Submitted',icon:'📁'},
+  {key:'bill2',label:'Bill 2 Made',icon:'🧾'},
+];
+
+// Customer table columns
+const CUST_COLS=[
+  {k:'order_id',    lbl:'Order ID',     fil:true, ft:(c)=>`<span class="oid">${c.order_id&&!c.order_id.startsWith('TMP-')?c.order_id:'—'}</span>`},
+  {k:'fvr_id',      lbl:'FVR ID',       fil:true, ft:(c)=>`<span class="fvr">${c.fvr_id||'—'}</span>`},
+  {k:'name_docs',   lbl:'Name (Docs)',  fil:true, ft:(c)=>`<div class="cname-cell"><div class="cn">${esc(c.name_docs)||'—'}</div><div class="cm">${esc(c.mobile)||''}</div></div>`},
+  {k:'loan_person', lbl:'Loan Person',  fil:true, ft:(c)=>c.loan_person||'—'},
+  {k:'ca_number',   lbl:'CA No.',       fil:true, ft:(c)=>`<span style="font-family:var(--mono);font-size:11px">${c.ca_number||'—'}</span>`},
+  {k:'sub_division',lbl:'Sub Div.',     fil:true, ft:(c)=>c.sub_division||'—'},
+  {k:'capacity',    lbl:'kW',           fil:true, ft:(c)=>`<span class="cap-tag">${c.capacity||'—'} kW</span>`},
+  {k:'seller_name', lbl:'Seller',       fil:true, ft:(c)=>esc(c.seller_name)||'—'},
+  {k:'solar_type',  lbl:'Solar Type',   fil:true, ft:(c)=>c.solar_type||'—'},
+  {k:'customer_type',lbl:'Type',        fil:true, ft:(c)=>c.customer_type||'—'},
+  {k:'final_amount',lbl:'Final Amt',    fil:false,ft:(c)=>c.final_amount?'₹'+Number(c.final_amount).toLocaleString('en-IN'):'—'},
+  {k:'advance_amount',lbl:'Advance',    fil:false,ft:(c)=>c.advance_amount?'₹'+Number(c.advance_amount).toLocaleString('en-IN'):'—'},
+  {k:'order_date',  lbl:'Date',         fil:true, ft:(c)=>fmtDate(c.order_date)},
+  {k:'work_status', lbl:'Work Status',  fil:true, ft:(c)=>{const m={Active:'b-active',Completed:'b-complete','On Hold':'b-pend2',Cancelled:'b-blocked'};return`<span class="badge ${m[c.work_status]||'b-na'}">${c.work_status||'—'}</span>`;}},
+  {k:'documents',   lbl:'Docs',         fil:false,ft:(c)=>{const u=c.documents||'';return u.startsWith('http')?`<a href="${u}" target="_blank" onclick="event.stopPropagation()" style="color:var(--solar);font-size:11px;font-weight:600">🔗 Open</a>`:'—';  }},
+  {k:'_overall',    lbl:'Overall',      fil:true, ft:(c)=>{const ov=calcSt(getTrk(custInternalId(c)));const m={Complete:'b-complete','In Progress':'b-progress',Pending:'b-pend2',Blocked:'b-blocked'};return`<span class="badge ${m[ov]||'b-na'}">${ov}</span>`;}},
+  {k:'_act',        lbl:'',             fil:false,ft:(c)=>`<span style="display:flex;gap:4px"><button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openEdit('${c.order_id||c.fvr_id}')">✏️</button><button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delCust('${c.order_id||c.fvr_id}')">🗑</button></span>`},
+];
+
+const TRACK_COLS=[
+  {k:'order_id',   lbl:'Order ID',  fil:true, ft:(c)=>`<span class="oid">${c.order_id&&!c.order_id.startsWith('TMP-')?c.order_id:'—'}</span>`},
+  {k:'fvr_id',     lbl:'FVR ID',   fil:true, ft:(c)=>`<span class="fvr">${c.fvr_id||'—'}</span>`},
+  {k:'name_docs',  lbl:'Name',     fil:true, ft:(c)=>`<div class="cname-cell"><div class="cn">${c.name_docs||'—'}</div><div class="cm">${esc(c.mobile)||''}</div></div>`},
+  {k:'order_date',  lbl:'Date',      fil:true, ft:(c)=>fmtDate(c.order_date)},
+  {k:'seller_name',lbl:'Seller',   fil:true, ft:(c)=>esc(c.seller_name)||'—'},
+  {k:'capacity',   lbl:'kW',       fil:true, ft:(c)=>`<span class="cap-tag">${c.capacity||'—'} kW</span>`},
+  ...STAGES.map(s=>({k:'_'+s.key,lbl:s.label,fil:true,
+    ft:(c)=>{
+      const t=getTrk(custInternalId(c));
+      if(s.key==='bill1'||s.key==='bill2'){
+        const bn=t[s.key+'_billno']||'';
+        if(bn) return`<span style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--solar)">${bn}</span>`;
+        return`<span style="color:var(--text3);font-size:10px">—</span>`;
+      }
+      const st=effStage(t,s);const lb={done:'✓ Done',pending:'Pend',failed:'✗ Fail',na:'—',cash:'💵 Cash'};return`<span class="badge ${stBC(st)}" style="font-size:9px">${lb[st]||'—'}</span>`;
+    }
+  })),
+  {k:'_final',    lbl:'Final Status',fil:true,ft:(c)=>{const ov=calcSt(getTrk(custInternalId(c)));const m={Complete:'b-complete','In Progress':'b-progress',Pending:'b-pend2',Blocked:'b-blocked'};return`<span class="badge ${m[ov]||'b-na'}">${ov}</span>`;}},
+  {k:'_loan_type',lbl:'Loan Status',fil:true,ft:(c)=>{const ls=getTrk(custInternalId(c)).loan_type||'';const lbl={cash:'💵 Cash',loan_pending:'⏳ Loan Pending',approval_pending:'🔄 Approval Pending',loan_approved:'✅ Loan Approved','':'—'};const bc={cash:'b-upi',loan_pending:'b-pending',approval_pending:'b-pending',loan_approved:'b-done','':'b-na'};return`<span class="badge ${bc[ls]}" style="font-size:9px">${lbl[ls]}</span>`;}},
+  {k:'_prog',     lbl:'Progress',   fil:false,ft:(c)=>{const t=getTrk(custInternalId(c));const dc=doneCnt(t);const dots=STAGES.map(s=>`<div class="pdot pd-${effStage(t,s)}" title="${s.label}"></div>`).join('');return`<div class="pdots">${dots}</div><div style="font-size:9px;color:var(--text3);margin-top:2px;font-family:var(--mono)">${dc}/${STAGES.length}</div>`;}},
+];
+
+const PAY_COLS=[
+  {k:'pay_id',    lbl:'Pay ID',    fil:false,ft:(p)=>`<span style="font-family:var(--mono);font-size:10px;color:var(--text3)">${p.pay_id||'—'}</span>`},
+  {k:'fvr_id',    lbl:'FVR ID',   fil:true, ft:(p)=>`<span class="fvr">${p.fvr_id||'—'}</span>`},
+  {k:'order_id',  lbl:'Order ID', fil:true, ft:(p)=>`<span class="oid">${p.order_id&&!String(p.order_id).startsWith('TMP-')?p.order_id:'—'}</span>`},
+  {k:'cust_name', lbl:'Customer', fil:true, ft:(p)=>p.cust_name||'—'},
+  {k:'payee_name',lbl:'Payee',    fil:true, ft:(p)=>p.payee_name||'—'},
+  {k:'date',      lbl:'Date',     fil:true, ft:(p)=>fmtDate(p.date)},
+  {k:'amount',    lbl:'Amount',   fil:false,ft:(p)=>p.amount?'₹'+Number(p.amount).toLocaleString('en-IN'):'—'},
+  {k:'type',      lbl:'Type',     fil:true, ft:(p)=>{const bc={Loan:'b-loan',Cash:'b-cash',Cheque:'b-cheque',UPI:'b-upi',Refund:'b-refund',Discount:'b-discount'};return`<span class="badge ${bc[p.type]||'b-na'}">${p.type||'—'}</span>`;}},
+  {k:'notes',     lbl:'Notes',    fil:false,ft:(p)=>p.notes?`<span style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block">${p.notes}</span>`:'—'},
+  {k:'proof',     lbl:'Proof',    fil:false,ft:(p)=>p.proof?`<a href="${p.proof}" target="_blank" onclick="event.stopPropagation()" style="color:var(--solar);font-size:11px;font-weight:600">🔗 Open</a>`:'—'},
+  {k:'_act',      lbl:'',         fil:false,ft:(p)=>`<span style="display:flex;gap:4px"><button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openEditPay('${p.pay_id}')">✏️</button><button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();delPay('${p.pay_id}')">🗑</button></span>`},
+];
+
+// ═══════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════
+function stBC(s){return{done:'b-done',pending:'b-pending',failed:'b-failed',na:'b-na',cash:'b-upi'}[s]||'b-na';}
+function defTrk(oid){const o={order_id:oid,final_status:'Pending',bill1_billno:'',bill2_billno:'',loan_type:''};STAGES.forEach(s=>{o[s.key+'_status']='na';o[s.key+'_date']='';o[s.key+'_note']='';});return o;}
+function getTrk(oid){return tracking[oid]||defTrk(oid);}
+// effStage: effective status for a stage — accounts for billno on bill stages, cash on loan
+function effStage(t,s){
+  if(s.key==='bill1'||s.key==='bill2'){
+    const bn=(t[s.key+'_billno']||'').trim();
+    if(bn)return'done';
+    if(t[s.key+'_status']==='failed')return'failed';
+    return t[s.key+'_status']||'na';
+  }
+  return t[s.key+'_status']||'na';
+}
+function calcSt(t){
+  if(!t||typeof t!=='object')return'Pending';
+  const ss=STAGES.map(s=>effStage(t,s));
+  // cash counts as done for overall status
+  const done=ss.every(s=>s==='done'||s==='na'||s==='cash')&&ss.some(s=>s==='done'||s==='cash');
+  if(done)return'Complete';
+  if(ss.some(s=>s==='failed'))return'Blocked';
+  if(ss.some(s=>s==='done'||s==='pending'||s==='cash'))return'In Progress';
+  return'Pending';
+}
+function doneCnt(t){return STAGES.filter(s=>{const e=effStage(t,s);return e==='done'||e==='cash';}).length;}
+function totKw(arr){if(!Array.isArray(arr))return 0;return arr.reduce((s,c)=>s+(parseFloat(c.capacity)||0),0);}
+function fmt(n){if(n===undefined||n===null||n==='')return'—';const num=Number(n);if(isNaN(num))return'—';if(num===0)return'₹0';return(num<0?'-₹':'₹')+Math.abs(num).toLocaleString('en-IN');}
+function fmtDate(d){
+  if(!d)return'—';
+  try{
+    let clean=String(d).trim();
+    if(clean.includes('T'))clean=clean.split('T')[0];
+    if(!clean||clean==='—')return'—';
+    const dt=new Date(clean+'T00:00:00');
+    if(isNaN(dt))return clean;
+    return dt.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+  }catch(e){return String(d);}
+}
+
+// Strip Sheets timestamp → clean YYYY-MM-DD
+function cleanDate(v){
+  if(!v)return'';
+  const s=String(v).trim();
+  if(!s||s==='—')return'';
+  // If it has a timezone (Z or +offset), parse as Date and get LOCAL date
+  // e.g. "2026-01-31T18:30:00.000Z" in India (UTC+5:30) = Feb 1 local → returns "2026-02-01"
+  if(s.includes('T')){
+    const dt=new Date(s);
+    if(!isNaN(dt)){
+      const y=dt.getFullYear();
+      const m=String(dt.getMonth()+1).padStart(2,'0');
+      const d=String(dt.getDate()).padStart(2,'0');
+      return y+'-'+m+'-'+d;
+    }
+    return s.split('T')[0]; // fallback
+  }
+  // Google Sheets serial date number (rare)
+  if(/^\d{5}$/.test(s)){
+    const dt=new Date((parseInt(s)-25569)*86400000);
+    const y=dt.getFullYear();
+    const m=String(dt.getMonth()+1).padStart(2,'0');
+    const d=String(dt.getDate()).padStart(2,'0');
+    return y+'-'+m+'-'+d;
+  }
+  return s;
+}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
+function fmtKw(n){
+  const v=parseFloat(n);
+  if(isNaN(v))return'0';
+  // Remove trailing zeros but keep exact precision
+  return parseFloat(v.toFixed(4)).toString();
+}
+function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function noData(){return'<div style="color:var(--text3);font-size:11px;padding:14px;text-align:center">No data</div>';}
+
+function loadLocal(){
+  try{
+    const rc=localStorage.getItem('kcrm_c');
+    const rt=localStorage.getItem('kcrm_t');
+    const rp=localStorage.getItem('kcrm_p');
+    if(rc){const parsed=JSON.parse(rc);if(Array.isArray(parsed))customers=parsed;}
+    if(rt){const parsed=JSON.parse(rt);if(parsed&&typeof parsed==='object')tracking=parsed;}
+    if(rp){const parsed=JSON.parse(rp);if(Array.isArray(parsed))payments=parsed;}
+    const rcc=localStorage.getItem('kcrm_cc');if(rcc){const parsed=JSON.parse(rcc);if(Array.isArray(parsed))cancelledCustomers=parsed;}
+  }catch(e){
+    console.warn('KalptaruCRM: localStorage parse error, resetting data:',e);
+    customers=[];tracking={};payments=[];cancelledCustomers=[];
+    localStorage.removeItem('kcrm_c');
+    localStorage.removeItem('kcrm_t');
+    localStorage.removeItem('kcrm_p');
+    toast('Data load error — storage was reset. Please reconnect Google Sheets.','error');
+  }
+}
+function saveLocal(){
+  try{
+    localStorage.setItem('kcrm_c',JSON.stringify(customers));
+    localStorage.setItem('kcrm_t',JSON.stringify(tracking));
+    localStorage.setItem('kcrm_p',JSON.stringify(payments));
+    localStorage.setItem('kcrm_cc',JSON.stringify(cancelledCustomers));
+  }catch(e){
+    if(e.name==='QuotaExceededError'||e.code===22){
+      toast('⚠ Browser storage full! Please connect Google Sheets or export CSV immediately.','error');
+    }else{
+      toast('Save error: '+e.message,'error');
+    }
+    console.error('KalptaruCRM saveLocal error:',e);
+  }
+}
+
+function findCust(id){if(!id)return undefined;return customers.find(c=>c.order_id===id||c.fvr_id===id||custInternalId(c)===id||c.order_id===('TMP-'+id));}
+function custInternalId(c){return c.order_id||('TMP-'+c.fvr_id);}
+
+// Payment received for a customer
+function payReceived(c){
+  if(!c)return 0;
+  const id=custInternalId(c);
+  const fvr=c.fvr_id||'';
+  return payments.filter(p=>(fvr&&p.fvr_id===fvr)||(id&&p.order_id===id)).reduce((s,p)=>{
+    if(p.type==='Refund'||p.type==='Discount')return s;
+    const amt=parseFloat(p.amount)||0;
+    return s+(amt>=0?amt:0);
+  },0);
+}
+
+// ═══════════════════════════════════════
+// COLUMN FILTER ENGINE
+// ═══════════════════════════════════════
+function getCV(obj,key,tbl){
+  if(tbl==='pay') return String(obj[key]||'');
+  if(key==='_overall'||key==='_final') return calcSt(getTrk(custInternalId(obj)));
+  const sk=key.replace(/^_/,'');
+  if(STAGES.find(s=>s.key===sk)){
+    const t=getTrk(custInternalId(obj));
+    if(sk==='bill1'||sk==='bill2'){const bn=(t[sk+'_billno']||'').trim();if(bn)return'done';if(t[sk+'_status']==='failed')return'failed';return'na';}
+    return t[sk+'_status']||'na';
+  }
+  return String(obj[key]||'');
+}
+function filterData(tbl){
+  const f=(colFilters[tbl]&&typeof colFilters[tbl]==='object')?colFilters[tbl]:{};
+  const src=tbl==='pay'?payments:tbl==='cancelled'?cancelledCustomers:customers.filter(x=>x.work_status!=='Cancelled');
+  const _sid=tbl==='pay'?'paySearch':tbl==='track'?'trackSearch':tbl==='cust'?'custSearch':tbl==='cancelled'?'cancelledSearch':'';const _sel=_sid?document.getElementById(_sid):null;const q=(_sel?.value||'').toLowerCase();
+  const tf=tabFilters[tbl]||{};
+  const MONTHS=['','January','February','March','April','May','June','July','August','September','October','November','December'];
+  return src.filter(o=>{
+    if(q){
+      const hay=(tbl==='pay')?`${o.fvr_id} ${o.order_id} ${o.cust_name} ${o.payee_name}`.toLowerCase():`${o.fvr_id} ${o.order_id} ${o.name_docs} ${o.loan_person} ${o.mobile} ${o.ca_number}`.toLowerCase();
+      if(!hay.includes(q))return false;
+    }
+    // tab quick filters
+    if(tbl==='cust'){
+      if(tf.seller&&o.seller_name!==tf.seller)return false;
+      if(tf.cap&&o.capacity!==tf.cap)return false;
+      if(tf.status&&o.work_status!==tf.status)return false;
+      if(tf.year||tf.months?.size){
+        const d=o.order_date?new Date(o.order_date):null;
+        if(!d)return false;
+        if(tf.year&&String(d.getFullYear())!==tf.year)return false;
+        if(tf.months?.size&&!tf.months.has(MONTHS[d.getMonth()+1]))return false;
+      }
+    }
+    if(tbl==='track'){
+      if(tf.seller&&o.seller_name!==tf.seller)return false;
+      if(tf.cap&&o.capacity!==tf.cap)return false;
+      if(tf.final&&calcSt(getTrk(custInternalId(o)))!==tf.final)return false;
+    }
+    if(tbl==='cancelled'){
+      if(tf.seller&&o.seller_name!==tf.seller)return false;
+    }
+    if(tbl==='pay'){
+      if(tf.seller){const cust=customers.find(cx=>cx.fvr_id===o.fvr_id||(o.order_id&&cx.order_id===o.order_id));if(!cust||cust.seller_name!==tf.seller)return false;}
+      if(tf.type&&o.type!==tf.type)return false;
+      if(tf.year||tf.months?.size){
+        const d=o.date?new Date(o.date):null;
+        if(!d)return false;
+        if(tf.year&&String(d.getFullYear())!==tf.year)return false;
+        if(tf.months?.size&&!tf.months.has(MONTHS[d.getMonth()+1]))return false;
+      }
+    }
+    for(const[k,vals]of Object.entries(f)){if(!vals)continue;if(vals.size===0)return false;if(!vals.has(getCV(o,k,tbl)))return false;}
+    return true;
+  });
+}
+function hasF(tbl){const tf=tabFilters[tbl]||{};const tabActive=Object.entries(tf).some(([k,v])=>k==='months'?v?.size>0:!!v);return tabActive||Object.values(colFilters[tbl]||{}).some(v=>v&&v.size>0)||(tbl==='track'&&!!trkStageFilter)||(tbl==='dash'&&dashMonths.size>0);}
+function allValsFor(key,tbl){
+  const src=tbl==='pay'?payments:tbl==='cancelled'?cancelledCustomers:customers.filter(x=>x.work_status!=='Cancelled');
+  const set=new Set();
+  src.forEach(o=>set.add(getCV(o,key,tbl)));
+  return[...set].sort();
+}
+
+function buildTh(col,tbl){
+  const th=document.createElement('th');
+  const active=colFilters[tbl][col.k]?.size>0;
+  const sortState=colSort[tbl]||{};
+  const isSorted=sortState.key===col.k&&sortState.dir;
+  if(active)th.classList.add('filtered');
+  if(isSorted)th.classList.add(sortState.dir==='asc'?'sorted-asc':'sorted-desc');
+  if(col.fil){
+    const fltActive=active||isSorted;
+    th.innerHTML=`<div class="th-wrap"><span class="th-label">${col.lbl}</span><button class="flt-btn${fltActive?' active':''}" onclick="event.stopPropagation();showCFD(this,'${col.k}','${tbl}')" title="Sort &amp; Filter">▾</button></div>`;
+  }else{
+    th.innerHTML=`<div class="th-wrap"><span class="th-label">${col.lbl}</span></div>`;
+  }
+  return th;
+}
+
+function isNumericCol(key){
+  return ['capacity','final_amount','advance_amount','amount'].includes(key)||key.startsWith('_');
+}
+function showCFD(btn,key,tbl){
+  if(openDd){openDd.remove();openDd=null;if(openDd===null&&btn._dd)return;}
+  const vals=allValsFor(key,tbl);
+  const sel=colFilters[tbl][key]||new Set(vals.map(String));
+  const curSort=colSort[tbl];
+  const isAsc=curSort.key===key&&curSort.dir==='asc';
+  const isDesc=curSort.key===key&&curSort.dir==='desc';
+  const isNum=isNumericCol(key);
+  const sortLabel1=isNum?'⬆ Smallest First':'A → Z';
+  const sortLabel2=isNum?'⬇ Largest First':'Z → A';
+  const dd=document.createElement('div');dd.className='cfd';
+  dd.innerHTML=`
+    <div class="cfd-sort">
+      <button class="cfd-sort-btn${isAsc?' on':''}" onclick="setSort('${key}','${tbl}','asc');closeDd();">${sortLabel1}</button>
+      <button class="cfd-sort-btn${isDesc?' on':''}" onclick="setSort('${key}','${tbl}','desc');closeDd();">${sortLabel2}</button>
+      ${(isAsc||isDesc)?`<button class="cfd-sort-btn" onclick="setSort('${key}','${tbl}',null);closeDd();" style="flex:0;padding:5px 7px;font-size:10px">✕</button>`:''}
+    </div>
+    <div class="cfd-head"><input class="cfd-sinp" placeholder="Search values…" oninput="cfdSearch(this)">
+    <div class="cfd-acts"><button class="cfd-a" onclick="cfdAll(this,true,'${key}','${tbl}')">All</button><button class="cfd-a" onclick="cfdAll(this,false,'${key}','${tbl}')">None</button></div></div>
+    <div class="cfd-list">${vals.map(v=>`<div class="cfd-item"><input type="checkbox" value="${v}" ${sel.has(String(v))?'checked':''} onchange="cfdToggle('${key}','${tbl}',this.value,this.checked)"><label onclick="this.previousElementSibling.click()">${v||'(blank)'}</label></div>`).join('')}</div>
+    <div class="cfd-foot"><button class="btn btn-ghost btn-xs" onclick="closeDd()">Close</button><button class="btn btn-solar btn-xs" onclick="applyF('${tbl}')">Apply</button></div>`;
+  btn.closest('th').appendChild(dd);
+  openDd=dd;btn._dd=dd;
+  setTimeout(()=>{document.addEventListener('click',function h(e){if(!dd.contains(e.target)&&e.target!==btn){dd.remove();openDd=null;document.removeEventListener('click',h);}});},50);
+}
+function cfdSearch(inp){inp.closest('.cfd').querySelectorAll('.cfd-item').forEach(i=>{i.style.display=i.querySelector('label').textContent.toLowerCase().includes(inp.value.toLowerCase())?'':'none';});}
+function cfdAll(btn,check,key,tbl){if(check){colFilters[tbl][key]=new Set(allValsFor(key,tbl).map(String));}else{colFilters[tbl][key]=new Set();}btn.closest('.cfd').querySelectorAll('.cfd-item input').forEach(cb=>{cb.checked=check;});}
+function applyF(tbl){closeDd();if(tbl==='cust')renderCustTable();else if(tbl==='track')renderTrackTable();else renderPayTable();}
+
+function clearAllCF(tbl){
+  if(tbl==='cancelled'){tabFilters.cancelled={};colFilters.cancelled={};const s=document.getElementById('cancelledSearch');if(s)s.value='';renderCancelledTable();return;}
+  if(tbl==='track'){trkStageFilter=null;}
+  colFilters[tbl]={};
+  colSort[tbl]={key:null,dir:null};
+  const searchMap={cust:'custSearch',track:'trackSearch',pay:'paySearch'};
+  const si=document.getElementById(searchMap[tbl]);if(si)si.value='';
+  // Reset tab quick filters
+  tabFilters[tbl]={};
+  if(tbl==='cust'){
+    tabFilters.cust={seller:'',cap:'',status:'',year:'',months:new Set()};
+    ['qcSeller','qcCap','qcStatus','qcYear'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    refreshMpk('cust');
+  }
+  if(tbl==='track'){['qtSeller','qtCap','qtFinal'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});}
+  if(tbl==='pay'){
+    tabFilters.pay={seller:'',type:'',year:'',months:new Set()};
+    ['qpSeller','qpType','qpYear'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    refreshMpk('pay');
+  }
+  if(tbl==='cust')renderCustTable();else if(tbl==='track')renderTrackTable();else renderPayTable();
+}
+
+// ═══════════════════════════════════════
+// CUSTOMER TABLE
+// ═══════════════════════════════════════
+function setSort(key,tbl,dir){
+  colSort[tbl]={key,dir};
+  if(tbl==='cust')renderCustTable();
+  else if(tbl==='track')renderTrackTable();
+  else renderPayTable();
+}
+
+function sortData(data,tbl){
+  if(!Array.isArray(data))return[];
+  const {key,dir}=colSort[tbl]||{};
+  if(!key||!dir)return data;
+  const numCols=['capacity','final_amount','advance_amount','amount'];
+  const isNum=numCols.includes(key);
+  return [...data].sort((a,b)=>{
+    let av=getCV(a,key,tbl)||'';
+    let bv=getCV(b,key,tbl)||'';
+    if(isNum){av=parseFloat(av)||0;bv=parseFloat(bv)||0;return dir==='asc'?av-bv:bv-av;}
+    return dir==='asc'?String(av).localeCompare(String(bv)):String(bv).localeCompare(String(av));
+  });
+}
+
+function renderCustTable(){
+  populateTabFilters();
+  const data=sortData(filterData('cust'),'cust');
+  const kw=totKw(data);
+  document.getElementById('custCount').textContent=data.length+' records';
+  document.getElementById('custKw').textContent=fmtKw(kw)+' kW total';
+  document.getElementById('custEmpty').style.display=data.length?'none':'';
+  const hF=hasF('cust');
+  const csq=(document.getElementById('custSearch')?.value||'')!=='';
+  const showClr=hF||csq;
+  const cc=document.getElementById('clrCust');if(cc)cc.style.display=showClr?'':'none';
+  const cc2=document.getElementById('clrCust2');if(cc2)cc2.style.display=showClr?'':'none';
+  const thead=document.getElementById('custThead');if(!thead)return;thead.innerHTML='';
+  CUST_COLS.forEach(col=>thead.appendChild(buildTh(col,'cust')));
+  document.getElementById('custTbody').innerHTML=data.map(c=>`
+    <tr onclick="openCustView('${custInternalId(c)}')">
+      ${CUST_COLS.map(col=>`<td>${col.ft(c)}</td>`).join('')}
+    </tr>`).join('');
+  const tfoot=document.getElementById('custTfoot');tfoot.innerHTML='';
+  if(data.length){
+    const tr=document.createElement('tr');tr.className='tfoot-row';
+    CUST_COLS.forEach((col,i)=>{
+      const td=document.createElement('td');
+      if(i===0)td.textContent='TOTAL';
+      else if(col.k==='capacity')td.textContent=fmtKw(kw)+' kW';
+      else if(col.k==='final_amount')td.textContent=fmt(data.reduce((s,c)=>s+(parseFloat(c.final_amount)||0),0));
+      else if(col.k==='advance_amount')td.textContent=fmt(data.reduce((s,c)=>s+(parseFloat(c.advance_amount)||0),0));
+      else td.textContent='';
+      tr.appendChild(td);
+    });
+    tfoot.appendChild(tr);
+  }
+}
+
+// ═══════════════════════════════════════
+// TRACKING TABLE
+// ═══════════════════════════════════════
+function renderTrackTable(){
+  populateTabFilters();
+  const allData=sortData(filterData('track'),'track');
+  // Apply stage pending filter if active
+  let data=trkStageFilter?allData.filter(c=>getTrk(custInternalId(c))[trkStageFilter+'_status']==='pending'):allData;
+  const kw=totKw(data);
+  document.getElementById('trackCount').textContent=data.length+' records';
+  document.getElementById('trackKw').textContent=fmtKw(kw)+' kW';
+  renderTrkSummary(allData);
+  document.getElementById('trackEmpty').style.display=data.length?'none':'';
+  const hF=hasF('track');
+  document.getElementById('clrTrack').style.display=hF?'':'none';
+  const thead=document.getElementById('trackThead');if(!thead)return;thead.innerHTML='';
+  TRACK_COLS.forEach(col=>thead.appendChild(buildTh(col,'track')));
+  document.getElementById('trackTbody').innerHTML=data.map(c=>`
+    <tr onclick="openTrkModal('${custInternalId(c)}')">
+      ${TRACK_COLS.map(col=>`<td>${col.ft(c)}</td>`).join('')}
+    </tr>`).join('');
+  const tfoot=document.getElementById('trackTfoot');tfoot.innerHTML='';
+  if(data.length){
+    const tr=document.createElement('tr');tr.className='tfoot-row';
+    TRACK_COLS.forEach((col,i)=>{
+      const td=document.createElement('td');
+      if(i===0)td.textContent='TOTAL';
+      else if(col.k==='capacity')td.textContent=fmtKw(kw)+' kW';
+      else if(col.k==='_final'){const c2=data.filter(c=>calcSt(getTrk(custInternalId(c)))==='Complete').length;td.textContent=c2+' complete';}
+      else td.textContent='';
+      tr.appendChild(td);
+    });
+    tfoot.appendChild(tr);
+  }
+}
+
+function renderTrkSummary(data){
+  const totalKW=totKw(data);
+  document.getElementById('trkSum').innerHTML=STAGES.map(s=>{
+    const doneArr=data.filter(c=>getTrk(custInternalId(c))[s.key+'_status']==='done');
+    const pendArr=data.filter(c=>getTrk(custInternalId(c))[s.key+'_status']==='pending');
+    const failArr=data.filter(c=>getTrk(custInternalId(c))[s.key+'_status']==='failed');
+    const doneKw=totKw(doneArr),pendKw=totKw(pendArr),failKw=totKw(failArr);
+    const pct=totalKW>0?Math.round(doneKw/totalKW*100):0;
+    const isActive=trkStageFilter===s.key;
+    const pendCount=pendArr.length;
+    return`<div class="ts-card${isActive?' ts-active':''}">
+      <div class="ts-icon">${s.icon}</div>
+      <div class="ts-name">${s.label}</div>
+      <div class="ts-kw">${fmtKw(doneKw)} kW</div>
+      <div class="ts-cnt">${doneArr.length} done</div>
+      <div class="ts-extra">${pendKw>0?`<span style="color:var(--amber)">${fmtKw(pendKw)} pend</span>`:''} ${failKw>0?`<span style="color:var(--red)">${fmtKw(failKw)} fail</span>`:''}</div>
+      <div class="ts-bar"><div class="ts-fill" style="width:${pct}%"></div></div>
+      <div style="font-size:8px;color:var(--text3);margin-top:2px">${totalKW>0?fmtKw(doneKw)+'/'+fmtKw(totalKW)+' kW':'-'}</div>
+      <button class="ts-pend-btn${isActive?' ts-pend-on':''}" onclick="setTrkStageFilter('${s.key}')" title="${isActive?'Clear filter':'Show only '+s.label+' pending'}">${isActive?'✕ Clear':(pendCount>0?'⏳ '+pendCount+' pending':'— no pending')}</button>
+    </div>`;
+  }).join('');
+}
+
+function setTrkStageFilter(key){
+  trkStageFilter = (trkStageFilter===key) ? null : key;
+  renderTrackTable();
+}
+
+// ═══════════════════════════════════════
+// PAYMENT TABLE
+// ═══════════════════════════════════════
+function renderPayTable(){
+  populateTabFilters();
+  const data=sortData(filterData('pay'),'pay');
+  const total=data.reduce((s,p)=>s+(parseFloat(p.amount)||0),0);
+  document.getElementById('payCount').textContent=data.length+' records';
+  document.getElementById('payTotal').textContent='Total: '+fmt(total);
+  document.getElementById('payEmpty').style.display=data.length?'none':'';
+  const hF=hasF('pay');
+  const b1=document.getElementById('clrPay');if(b1)b1.style.display=hF?'':'none';
+  const thead=document.getElementById('payThead');if(!thead)return;thead.innerHTML='';
+  PAY_COLS.forEach(col=>thead.appendChild(buildTh(col,'pay')));
+  document.getElementById('payTbody').innerHTML=data.map(p=>`
+    <tr onclick="openEditPay('${p.pay_id}')">
+      ${PAY_COLS.map(col=>`<td>${col.ft(p)}</td>`).join('')}
+    </tr>`).join('');
+  const tfoot=document.getElementById('payTfoot');tfoot.innerHTML='';
+  if(data.length){
+    const tr=document.createElement('tr');tr.className='tfoot-row';
+    PAY_COLS.forEach((col,i)=>{
+      const td=document.createElement('td');
+      if(i===0)td.textContent='TOTAL';
+      else if(col.k==='amount')td.textContent=fmt(total);
+      else td.textContent='';
+      tr.appendChild(td);
+    });
+    tfoot.appendChild(tr);
+  }
+  // Pay stats
+  const byType={};PAY_FIELDS.forEach(()=>{});
+  payments.forEach(p=>{byType[p.type]=(byType[p.type]||0)+(parseFloat(p.amount)||0);});
+  const types=['Loan','Cash','Cheque','UPI','Refund','Discount'];
+  const bc={Loan:'var(--blue)',Cash:'var(--green)',Cheque:'var(--purple)',UPI:'var(--teal)',Refund:'var(--red)',Discount:'var(--amber)'};
+  document.getElementById('payStats').innerHTML=types.map(t=>`
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px">
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);margin-bottom:6px">${t}</div>
+      <div style="font-size:18px;font-weight:800;color:${bc[t]};font-family:var(--font-d)">${byType[t]?fmt(byType[t]):'₹0'}</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:2px">${payments.filter(p=>p.type===t).length} payments</div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════
+// CANCELLED ORDERS TABLE
+// ═══════════════════════════════════════
+function renderCancelledTable(){
+  populateTabFilters();
+  const data=sortData(filterData('cancelled'),'cancelled');
+  const kw=totKw(data);
+  const el_count=document.getElementById('cancelledCount');if(el_count)el_count.textContent=data.length+' records';
+  const el_kw=document.getElementById('cancelledKw');if(el_kw)el_kw.textContent=fmtKw(kw)+' kW';
+  const el_empty=document.getElementById('cancelledEmpty');if(el_empty)el_empty.style.display=data.length?'none':'';
+  // Update tab badge
+  const tabBtn=document.getElementById('cancelledTabBtn');
+  if(tabBtn)tabBtn.textContent='🚫 Cancelled'+(cancelledCustomers.length?' ('+cancelledCustomers.length+')':'');
+  const hF=hasF('cancelled');
+  const clrBtn=document.getElementById('clrCancelled');if(clrBtn)clrBtn.style.display=hF?'':'none';
+  const thead=document.getElementById('cancelledThead');if(!thead)return;thead.innerHTML='';
+  // Reuse CUST_COLS but add a Restore button at end
+  const CAN_COLS=[
+    ...CUST_COLS.filter(col=>col.k!=='_act'),
+    {k:'_can_act',lbl:'',fil:false,ft:(c)=>`<button class="btn btn-outline btn-xs" style="font-size:10px;border-color:var(--green);color:var(--green)" onclick="event.stopPropagation();restoreOrder('${c.fvr_id||c.order_id}')">↩ Restore</button>`}
+  ];
+  CAN_COLS.forEach(col=>thead.appendChild(buildTh(col,'cancelled')));
+  document.getElementById('cancelledTbody').innerHTML=data.map(c=>`
+    <tr style="opacity:.85">
+      ${CAN_COLS.map(col=>`<td>${col.ft(c)}</td>`).join('')}
+    </tr>`).join('');
+  const tfoot=document.getElementById('cancelledTfoot');if(tfoot)tfoot.innerHTML='';
+  if(data.length&&tfoot){
+    const tr=document.createElement('tr');tr.className='tfoot-row';
+    CAN_COLS.forEach((col,i)=>{
+      const td=document.createElement('td');
+      if(i===0)td.textContent='TOTAL';
+      else if(col.k==='capacity')td.textContent=fmtKw(kw)+' kW';
+      else if(col.k==='final_amount')td.textContent=fmt(data.reduce((s,c)=>s+(parseFloat(c.final_amount)||0),0));
+      else td.textContent='';
+      tr.appendChild(td);
+    });
+    tfoot.appendChild(tr);
+  }
+}
+function restoreOrder(id){
+  const c=cancelledCustomers.find(x=>x.fvr_id===id||x.order_id===id);
+  if(!c)return;
+  if(!confirm('Restore "'+c.name_docs+'" to active Customer Data?'))return;
+  c.work_status='Active';
+  cancelledCustomers=cancelledCustomers.filter(x=>x.fvr_id!==id&&x.order_id!==id);
+  customers.push(c);
+  const internalId=custInternalId(c);
+  if(!tracking[internalId])tracking[internalId]=defTrk(internalId);
+  // Remove from CancelledOrders sheet, add back to Customers sheet
+  delSheets('CancelledOrders',c.fvr_id||id);
+  syncSheets('Customers',c);
+  syncSheets('Tracking',tracking[internalId]);
+  saveLocal();resetSyncTimer();
+  renderCustTable();renderTrackTable();renderCancelledTable();renderDash();
+  toast('Order restored to active customers!','success');
+}
+function getDashBase(){
+  const year=document.getElementById('dYear')?.value||'2025';
+  const seller=document.getElementById('dSeller')?.value||'';
+  const cap=document.getElementById('dCap')?.value||'';
+  return customers.filter(c=>{
+    if(c.order_date){
+      const d=new Date(c.order_date);
+      if(String(d.getFullYear())!==year)return false;
+      if(dashMonths.size&&!dashMonths.has(d.toLocaleString('default',{month:'long'})))return false;
+    } else if(year||dashMonths.size) return false;
+    if(seller&&c.seller_name!==seller)return false;
+    if(cap&&c.capacity!==cap)return false;
+    return true;
+  });
+}
+function clearDashF(){
+  dashMonths=new Set();
+  refreshMpk('dash');
+  ['dSeller','dCap'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  renderDash();
+}
+
+// ═══════════════════════════════════════
+// TAB QUICK FILTERS
+// ═══════════════════════════════════════
+function setTabF(tbl,key,val){
+  tabFilters[tbl][key]=val;
+  if(tbl==='cust')renderCustTable();
+  else if(tbl==='track')renderTrackTable();
+  else renderPayTable();
+}
+
+function populateTabFilters(){
+  const sellers=[...new Set(customers.map(c=>c.seller_name).filter(Boolean))].sort();
+  const caps=[...new Set(customers.map(c=>c.capacity).filter(Boolean))].sort((a,b)=>parseFloat(a)-parseFloat(b));
+  const statuses=[...new Set(customers.map(c=>c.work_status).filter(Boolean))].sort();
+  const payTypes=[...new Set(payments.map(p=>p.type).filter(Boolean))].sort();
+  // Collect years from both customers and payments
+  const custYears=[...new Set(customers.map(c=>c.order_date?new Date(c.order_date).getFullYear():'').filter(Boolean))].sort();
+  const payYears=[...new Set(payments.map(p=>p.date?new Date(p.date).getFullYear():'').filter(Boolean))].sort();
+  const allYears=[...new Set([...custYears,...payYears])].sort();
+  const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  function populate(id,opts,placeholder){
+    const el=document.getElementById(id);if(!el)return;
+    const cv=el.value;
+    el.innerHTML=`<option value="">${placeholder}</option>`+opts.map(o=>`<option value="${o}"${o===cv?' selected':''}>${o}</option>`).join('');
+  }
+
+  // Customer tab
+  populate('qcSeller',sellers,'All Sellers');
+  const qcCapEl=document.getElementById('qcCap');if(qcCapEl){const cv=tabFilters.cust.cap;qcCapEl.innerHTML='<option value="">All kW</option>'+caps.map(x=>`<option value="${x}"${x===cv?' selected':''}>${x} kW</option>`).join('');}
+  populate('qcStatus',statuses,'All Status');
+  populate('qcYear',custYears.map(String),'All Years');
+  // Month: mpk-cust (no select to populate)
+
+  // Tracking tab
+  populate('qtSeller',sellers,'All Sellers');
+  const qtCapEl=document.getElementById('qtCap');if(qtCapEl){const cv=tabFilters.track.cap;qtCapEl.innerHTML='<option value="">All kW</option>'+caps.map(x=>`<option value="${x}"${x===cv?' selected':''}>${x} kW</option>`).join('');}
+  populate('qtFinal',['Complete','In Progress','Pending','Blocked'],'All Status');
+
+  // Payment tab
+  populate('qpSeller',sellers,'All Sellers');
+  populate('qpType',payTypes,'All Types');
+  populate('qpYear',allYears.map(String),'All Years');
+  // Month: mpk-pay (no select to populate)
+
+  // Cancelled tab
+  const canSellers=[...new Set([...sellers,...cancelledCustomers.map(c=>c.seller_name).filter(Boolean)])].sort();
+  populate('qcanSeller',canSellers,'All Sellers');
+}
+
+// ═══════════════════════════════════════
+// MULTI-MONTH PICKER
+// ═══════════════════════════════════════
+const ALL_MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+// Get the active Set for a picker context
+function mpkSet(ctx){
+  if(ctx==='dash')return dashMonths;
+  if(ctx==='cust')return tabFilters.cust.months||(tabFilters.cust.months=new Set());
+  if(ctx==='pay')return tabFilters.pay.months||(tabFilters.pay.months=new Set());
+  return new Set();
+}
+
+// Build label for button
+function mpkLabel(ctx){
+  const s=mpkSet(ctx);
+  if(!s.size)return'All Months';
+  if(s.size===1)return[...s][0].slice(0,3);
+  if(s.size<=3)return[...s].map(m=>m.slice(0,3)).join(', ');
+  return s.size+' months';
+}
+
+// Build/re-render the dropdown items
+function buildMpkDrop(ctx){
+  const dropId='mpk-'+ctx+'-drop';
+  const drop=document.getElementById(dropId);
+  if(!drop)return;
+  const sel=mpkSet(ctx);
+  const allChk=sel.size===12;
+  drop.innerHTML=`
+    <div class="mpk-all${allChk?' chk':''}" onclick="mpkToggleAll('${ctx}')">
+      <div class="mpk-cb"></div><span>Select All</span>
+    </div>`+
+    ALL_MONTHS.map(m=>`
+    <div class="mpk-item${sel.has(m)?' chk':''}" onclick="mpkToggle('${ctx}','${m}')">
+      <div class="mpk-cb"></div><span>${m}</span>
+    </div>`).join('');
+}
+
+// Toggle a single month
+function mpkToggle(ctx,month){
+  const s=mpkSet(ctx);
+  s.has(month)?s.delete(month):s.add(month);
+  refreshMpk(ctx);
+  mpkFire(ctx);
+}
+
+// Toggle select-all
+function mpkToggleAll(ctx){
+  const s=mpkSet(ctx);
+  if(s.size===12){s.clear();}else{ALL_MONTHS.forEach(m=>s.add(m));}
+  refreshMpk(ctx);
+  mpkFire(ctx);
+}
+
+// Refresh button label + checkbox states
+function refreshMpk(ctx){
+  const btn=document.getElementById('mpk-'+ctx+'-btn');
+  if(!btn)return;
+  const s=mpkSet(ctx);
+  btn.textContent=mpkLabel(ctx);
+  btn.className='mpk-btn'+(s.size?' active':'');
+  // Update checkboxes if drop is open
+  const drop=document.getElementById('mpk-'+ctx+'-drop');
+  if(drop?.classList.contains('open'))buildMpkDrop(ctx);
+}
+
+// Trigger data refresh
+function mpkFire(ctx){
+  if(ctx==='dash')renderDash();
+  else if(ctx==='cust')renderCustTable();
+  else if(ctx==='pay')renderPayTable();
+}
+
+// Open/close picker
+let openMpk=null;
+function toggleMpk(ctx){
+  const dropId='mpk-'+ctx+'-drop';
+  const drop=document.getElementById(dropId);
+  if(!drop)return;
+  const isOpen=drop.classList.contains('open');
+  // Close any other open picker
+  if(openMpk&&openMpk!==dropId){
+    document.getElementById(openMpk)?.classList.remove('open');
+  }
+  if(isOpen){drop.classList.remove('open');openMpk=null;}
+  else{buildMpkDrop(ctx);drop.classList.add('open');openMpk=dropId;}
+}
+
+// Close picker when clicking outside
+document.addEventListener('click',function(e){
+  if(!openMpk)return;
+  const drop=document.getElementById(openMpk);
+  if(drop&&!drop.closest('.mpk-wrap').contains(e.target)){
+    drop.classList.remove('open');openMpk=null;
+  }
+});
+
+function populateDashFilters(){
+  const sellers=[...new Set(customers.map(c=>c.seller_name).filter(Boolean))].sort();
+  const caps=[...new Set(customers.map(c=>c.capacity).filter(Boolean))].sort((a,b)=>parseFloat(a)-parseFloat(b));
+  const ds=document.getElementById('dSeller');
+  if(ds){const cv=ds.value;ds.innerHTML='<option value="">All Sellers</option>'+sellers.map(s=>`<option${s===cv?' selected':''}>${s}</option>`).join('');}
+  const dc=document.getElementById('dCap');
+  if(dc){const cv=dc.value;dc.innerHTML='<option value="">All</option>'+caps.map(c=>`<option${c===cv?' selected':''}>${c} kW</option>`).join('');}
+}
+
+// ═══════════════════════════════════════
+// GREETING
+// ═══════════════════════════════════════
+function getGreeting(){
+  const h=new Date().getHours();
+  if(h>=5&&h<12)return'Good morning';
+  if(h>=12&&h<17)return'Good afternoon';
+  if(h>=17&&h<21)return'Good evening';
+  return'Good night';
+}
+function renderGreeting(){
+  const el=document.getElementById('dashGreeting');if(!el)return;
+  const name=localStorage.getItem('kcrm_username')||'Jatin';
+  const h=new Date().getHours();
+  const emoji=h>=5&&h<12?'🌅':h>=12&&h<17?'☀️':h>=17&&h<21?'🌆':'🌙';
+  const now=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true});
+  el.innerHTML=`<div style="font-size:11px;font-weight:800;color:var(--solar);letter-spacing:.3px">${emoji} ${getGreeting()}, ${esc(name)}!</div><div style="font-size:10px;color:var(--text3);margin-top:2px">${now}</div>`;
+}
+
+function renderDash(){
+  populateDashFilters();
+  renderGreeting();
+  const base=getDashBase();
+  const total=base.length;
+  const withOid=base.filter(c=>c.order_id&&!c.order_id.startsWith('TMP-'));
+  const withoutOid=base.filter(c=>!c.order_id||c.order_id.startsWith('TMP-'));
+  const complete=base.filter(c=>calcSt(getTrk(custInternalId(c)))==='Complete');
+  const prog=base.filter(c=>calcSt(getTrk(custInternalId(c)))==='In Progress');
+  const pend=base.filter(c=>calcSt(getTrk(custInternalId(c)))==='Pending');
+  const tkw=totKw(base);
+  const oidKw=totKw(withOid);
+  const totAmt=base.reduce((s,c)=>s+(parseFloat(c.final_amount)||0),0);
+  const totPaid=base.reduce((s,c)=>s+payReceived(c),0);
+
+  document.getElementById('dashStats').innerHTML=[
+    {ic:'📋',bg:'rgba(37,99,235,.1)',c:'var(--blue)',   val:total,                               lbl:'Total Orders',      sub:fmtKw(tkw)+' kW'},
+    {ic:'🔑',bg:'rgba(232,116,0,.12)',c:'var(--solar)',  val:fmtKw(oidKw)+' kW',                  lbl:'Order ID Received', sub:withOid.length+' orders'},
+    {ic:'⏳',bg:'rgba(201,122,0,.1)', c:'var(--amber)',  val:withoutOid.length,                   lbl:'Pending Order ID',  sub:fmtKw(totKw(withoutOid))+' kW'},
+    {ic:'✅',bg:'rgba(18,147,106,.1)', c:'var(--green)',  val:fmtKw(totKw(complete))+' kW',    lbl:'Complete kW',       sub:complete.length+' orders'},
+    {ic:'⚡',bg:'rgba(232,116,0,.1)',c:'var(--solar)',  val:fmtKw(tkw),                      lbl:'Total kW',          sub:total+' orders'},
+    {ic:'💰',bg:'rgba(124,58,237,.1)',c:'var(--purple)', val:'₹'+fmtKw(totPaid/100000)+'L', lbl:'Total Received',    sub:'of ₹'+fmtKw(totAmt/100000)+'L'},
+  ].map(({ic,bg,c,val,lbl,sub})=>`<div class="stat-card"><div class="sc-icon" style="background:${bg}">${ic}</div><div class="sc-val" style="color:${c}">${val}</div><div class="sc-label">${lbl}</div><div class="sc-sub">${sub}</div></div>`).join('');
+
+  // Cap chart
+  const capG={};base.forEach(c=>{const k=(c.capacity||'?')+' kW';capG[k]=(capG[k]||0)+(parseFloat(c.capacity)||0);});
+  const maxC=Math.max(...Object.values(capG),1);
+  document.getElementById('capChart').innerHTML=Object.entries(capG).sort((a,b)=>parseFloat(a[0])-parseFloat(b[0])).map(([k,v])=>`
+    <div class="bar-row"><div class="bar-lbl">${k}</div>
+    <div class="bar-track"><div class="bar-fill" style="width:${v/maxC*100}%;background:linear-gradient(90deg,var(--solar),#c85e00)"></div></div>
+    <div class="bar-val">${fmtKw(v)} kW</div></div>`).join('')||noData();
+
+  // Seller dual bar
+  const sellers=[...new Set(base.map(c=>c.seller_name).filter(Boolean))];
+  const sData=sellers.map(sel=>{
+    const all=base.filter(c=>c.seller_name===sel);
+    const wO=all.filter(c=>c.order_id&&!c.order_id.startsWith('TMP-'));
+    return{sel,total:totKw(all),oidKw:totKw(wO),cnt:all.length};
+  }).sort((a,b)=>b.total-a.total).slice(0,8);
+  const maxS=Math.max(...sData.map(x=>x.total),1);
+  document.getElementById('sellerChart').innerHTML=sData.length?sData.map(({sel,total,oidKw,cnt})=>`
+    <div style="margin-bottom:9px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:2px">
+        <span style="font-size:11px;color:var(--text2);font-weight:600;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${sel}</span>
+        <span style="font-size:10px;color:var(--text3)">${cnt} · ${fmtKw(total)} kW</span>
+      </div>
+      <div style="position:relative;height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;margin-bottom:2px">
+        <div style="position:absolute;left:0;top:0;height:100%;width:${total/maxS*100}%;background:linear-gradient(90deg,var(--solar),#c85e00);border-radius:3px"></div>
+      </div>
+      <div style="position:relative;height:4px;background:var(--surface3);border-radius:3px;overflow:hidden">
+        <div style="position:absolute;left:0;top:0;height:100%;width:${total>0?oidKw/total*100:0}%;background:var(--green);border-radius:3px"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:2px">
+        <span style="font-size:9px;color:var(--solar)">▪ ${fmtKw(total)} kW total</span>
+        <span style="font-size:9px;color:var(--green)">▪ ${fmtKw(oidKw)} kW w/ Order ID</span>
+      </div>
+    </div>`).join(''):noData();
+
+  // Stage grid
+  document.getElementById('stageGrid').innerHTML=total===0?`<div style="grid-column:span 2;color:var(--text3);font-size:11px;text-align:center;padding:14px">No data</div>`:
+    STAGES.map(s=>{
+      const doneArr=base.filter(c=>getTrk(custInternalId(c))[s.key+'_status']==='done');
+      const dkw=totKw(doneArr);
+      const pct=tkw>0?Math.round(dkw/tkw*100):0;
+      return`<div class="sg-item"><div class="sg-top"><div class="sg-name">${s.icon} ${s.label}</div><div class="sg-val">${fmtKw(dkw)} kW</div></div><div class="sg-bar"><div class="sg-fill" style="width:${pct}%"></div></div></div>`;
+    }).join('');
+
+  // Status bars
+  const statItems=[{lbl:'Complete',arr:complete,c:'var(--green)'},{lbl:'In Progress',arr:prog,c:'var(--blue)'},{lbl:'Pending',arr:pend,c:'var(--amber)'}];
+  const maxSt=Math.max(...statItems.map(x=>totKw(x.arr)),1);
+  document.getElementById('statusBars').innerHTML=`
+    <div style="background:var(--surface2);border-radius:8px;padding:11px;margin-bottom:11px;border:1px solid var(--border)">
+      <div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:10px;font-weight:700;color:var(--solar)">Order ID Received</span><span style="font-size:12px;font-weight:800;color:var(--solar)">${withOid.length} · ${fmtKw(oidKw)} kW</span></div>
+      <div style="height:7px;background:var(--surface3);border-radius:3px;overflow:hidden"><div style="width:${tkw>0?oidKw/tkw*100:0}%;height:100%;background:linear-gradient(90deg,var(--solar),#c85e00);border-radius:3px"></div></div>
+    </div>
+    <div class="bar-chart" style="margin-bottom:11px">
+      ${statItems.map(({lbl,arr,c})=>`<div class="bar-row"><div class="bar-lbl">${lbl}</div><div class="bar-track"><div class="bar-fill" style="width:${totKw(arr)/maxSt*100}%;background:${c}"></div></div><div class="bar-val" style="color:${c}">${fmtKw(totKw(arr))} kW</div></div>`).join('')}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px">
+      ${statItems.map(({lbl,arr,c})=>`<div style="background:var(--surface2);border-radius:7px;padding:9px 11px;border:1px solid var(--border)"><div style="font-size:16px;font-weight:800;font-family:var(--font-d);color:${c}">${fmtKw(totKw(arr))} kW</div><div style="font-size:10px;color:var(--text3);margin-top:1px;font-weight:600">${lbl} · ${arr.length}</div></div>`).join('')}
+    </div>`;
+
+  renderMonthlyTable(base);
+  renderPayDashTable(base);
+}
+
+function renderMonthly(base){return renderMonthlyTable(base);}
+function renderMonthlyTable(base){
+  const year=document.getElementById('dYear')?.value||'2025';
+  document.getElementById('mthTitle').textContent=`${year} — months with data`;
+  const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const caps=[...new Set(base.map(c=>c.capacity).filter(Boolean))].sort((a,b)=>parseFloat(a)-parseFloat(b));
+  const sellers=[...new Set(base.map(c=>c.seller_name).filter(Boolean))].sort();
+  // Only show months that have data
+  const activeMonths=MONTHS.filter((_,mi)=>base.some(c=>{if(!c.order_date)return false;const d=new Date(c.order_date);return d.getFullYear()===parseInt(year)&&d.getMonth()===mi;}));
+  if(!activeMonths.length){document.getElementById('monthTable').innerHTML='<tr><td style="color:var(--text3);font-size:11px;padding:14px">No data for selected year</td></tr>';return;}
+  let html=`<thead><tr><th>Month</th><th>Orders</th><th>kW</th>${caps.map(c=>`<th>${c}kW</th>`).join('')}${sellers.map(s=>`<th>${s}</th>`).join('')}</tr></thead><tbody>`;
+  let tO=0,tK=0;const tC={},tS={};
+  activeMonths.forEach(mon=>{
+    const mi=MONTHS.indexOf(mon);
+    const mc=base.filter(c=>{if(!c.order_date)return false;const d=new Date(c.order_date);return d.getFullYear()===parseInt(year)&&d.getMonth()===mi;});
+    const kw=totKw(mc);tO+=mc.length;tK+=kw;
+    html+=`<tr><td style="font-weight:600">${mon.slice(0,3)}</td><td style="color:var(--blue);font-weight:700">${mc.length}</td><td style="color:var(--solar);font-weight:700">${fmtKw(kw)} kW</td>`;
+    caps.forEach(cap=>{const arr=mc.filter(c=>c.capacity===cap);const kw2=totKw(arr);tC[cap]=(tC[cap]||0)+kw2;const cc=kw2?'var(--solar)':'var(--text3)';const fw=kw2?700:400;html+=`<td style="color:${cc};font-weight:${fw}">${kw2?fmtKw(kw2):'—'}</td>`;});
+    sellers.forEach(sel=>{const arr=mc.filter(c=>c.seller_name===sel);const kw2=totKw(arr);tS[sel]=(tS[sel]||0)+kw2;const sc=kw2?'var(--text)':'var(--text3)';const sf=kw2?600:400;html+=`<td style="color:${sc};font-weight:${sf}">${kw2?arr.length+' ('+fmtKw(kw2)+'kW)':'—'}</td>`;});
+    html+=`</tr>`;
+  });
+  html+=`<tr class="tot-row"><td>TOTAL</td><td>${tO}</td><td>${fmtKw(tK)} kW</td>${caps.map(c=>`<td>${fmtKw(tC[c]||0)} kW</td>`).join('')}${sellers.map(s=>`<td>${fmtKw(tS[s]||0)} kW</td>`).join('')}</tr></tbody>`;
+  document.getElementById('monthTable').innerHTML=html;
+}
+
+function populatePayDashSeller(base){
+  const el=document.getElementById('pdSeller');if(!el)return;
+  const cur=el.value;
+  const sellers=[...new Set(base.map(c=>c.seller_name).filter(Boolean))].sort();
+  el.innerHTML='<option value="">All Sellers</option>'+sellers.map(s=>`<option${s===cur?' selected':''}>${s}</option>`).join('');
+}
+
+function clearPayDashF(){
+  ['payDashSearch','pdSeller','pdBalance','pdSort'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  renderPayDashTable(getDashBase());
+}
+
+function renderPayDashTable(base){
+  try{
+  const tbody=document.getElementById('payDashBody');
+  if(!tbody)return;
+
+  // Populate seller filter dropdown from current base
+  populatePayDashSeller(base);
+
+  // — Search —
+  const sq=(document.getElementById('payDashSearch')?.value||'').toLowerCase();
+  if(sq) base=base.filter(c=>`${c.fvr_id} ${c.order_id} ${c.name_docs} ${c.loan_person} ${c.seller_name}`.toLowerCase().includes(sq));
+
+  // — Seller filter —
+  const selF=document.getElementById('pdSeller')?.value||'';
+  if(selF) base=base.filter(c=>c.seller_name===selF);
+
+  // — Balance filter —
+  const balF=document.getElementById('pdBalance')?.value||'';
+
+  // Build rows with financial data first so we can filter/sort
+  let rows=base.map(c=>{
+    const fin=parseFloat(c.final_amount)||0;
+    const rec=payReceived(c);
+    const bal=fin-rec;
+    return{c,fin,rec,bal};
+  });
+
+  if(balF==='pending')  rows=rows.filter(r=>r.bal>0);
+  else if(balF==='clear')   rows=rows.filter(r=>r.bal===0);
+  else if(balF==='excess')  rows=rows.filter(r=>r.bal<0);
+
+  // — Sort —
+  const sortV=document.getElementById('pdSort')?.value||'';
+  if(sortV){
+    const sortMap={
+      bal_desc:(a,b)=>b.bal-a.bal,
+      bal_asc:(a,b)=>a.bal-b.bal,
+      final_desc:(a,b)=>b.fin-a.fin,
+      final_asc:(a,b)=>a.fin-b.fin,
+      recv_desc:(a,b)=>b.rec-a.rec,
+      recv_asc:(a,b)=>a.rec-b.rec,
+      name_asc:(a,b)=>(a.c.name_docs||'').localeCompare(b.c.name_docs||''),
+      name_desc:(a,b)=>(b.c.name_docs||'').localeCompare(a.c.name_docs||''),
+      kw_desc:(a,b)=>(parseFloat(b.c.capacity)||0)-(parseFloat(a.c.capacity)||0),
+      kw_asc:(a,b)=>(parseFloat(a.c.capacity)||0)-(parseFloat(b.c.capacity)||0),
+    };
+    if(sortMap[sortV]) rows.sort(sortMap[sortV]);
+  }
+
+  let totFinal=0,totPaid=0;
+  tbody.innerHTML=rows.map(({c,fin,rec,bal})=>{
+    totFinal+=fin;totPaid+=rec;
+    const balTxt=bal>0
+      ?`<span style="color:var(--red);font-weight:700">₹${bal.toLocaleString('en-IN')}</span>`
+      :bal===0
+        ?`<span style="color:var(--green);font-weight:700">✓ Clear</span>`
+        :`<span style="color:var(--amber);font-weight:700">Refund ₹${Math.abs(bal).toLocaleString('en-IN')}</span>`;
+    const oid=c.order_id&&!c.order_id.startsWith('TMP-')?c.order_id:'—';
+    const pct=fin>0?Math.min(rec/fin*100,100):0;
+    return`<tr>
+      <td><span class="oid">${oid}</span></td>
+      <td><span class="fvr">${c.fvr_id||'—'}</span></td>
+      <td><div style="font-weight:600;font-size:12px;color:var(--text)">${c.name_docs||'—'}</div><div style="font-size:10px;color:var(--text3)">${c.seller_name||''}</div></td>
+      <td><span class="cap-tag">${c.capacity||'—'} kW</span></td>
+      <td style="font-weight:600">${fin?fmt(fin):'—'}</td>
+      <td style="color:var(--green);font-weight:600">${rec?fmt(rec):'—'}</td>
+      <td>${balTxt}</td>
+      <td>${fin?`<div style="display:flex;align-items:center;gap:5px"><div style="height:5px;width:70px;background:var(--surface3);border-radius:3px;overflow:hidden"><div style="height:100%;width:${pct}%;background:var(--green);border-radius:3px"></div></div><span style="font-size:9px;color:var(--text3);font-family:var(--mono)">${Math.round(pct)}%</span></div>`:''}</td>
+    </tr>`;
+  }).join('');
+
+  // Summary row
+  const tot=document.createElement('tr');
+  tot.style.cssText='background:rgba(245,166,35,.07);font-weight:700';
+  const totBal=totFinal-totPaid;
+  const totBC=totBal>0?'var(--red)':totBal<0?'var(--amber)':'var(--green)';
+  tot.innerHTML=`
+    <td colspan="2" style="color:var(--solar);font-size:11px;padding:9px 10px">TOTAL — ${rows.length} customers</td>
+    <td></td><td></td>
+    <td style="color:var(--solar);font-size:11px;padding:9px 10px;font-weight:800">${fmt(totFinal)}</td>
+    <td style="color:var(--green);font-size:11px;padding:9px 10px;font-weight:800">${fmt(totPaid)}</td>
+    <td style="color:${totBC};font-size:11px;padding:9px 10px;font-weight:800">${totBal>=0?'':'-'}${fmt(Math.abs(totBal))}</td>
+    <td style="font-size:10px;color:var(--text3);padding:9px 10px">${totFinal>0?Math.round(totPaid/totFinal*100)+'% paid':''}</td>`;
+  tbody.appendChild(tot);
+  }catch(e){console.warn('payDashTable error:',e);}
+}
+
+// ═══════════════════════════════════════
+// ADD/EDIT CUSTOMER
+// ═══════════════════════════════════════
+function openAddCust(){
+  editingCustId=null;
+  const sb=document.getElementById('saveCustBtn');if(sb)sb.disabled=false;
+  setTimeout(()=>updateLinkBtn('f_documents'),50);
+  document.getElementById('custModalTitle').textContent='Add New Customer';
+  CUST_FIELDS.forEach(k=>{const el=document.getElementById('f_'+k);if(el)el.value='';});
+  try{document.getElementById('f_order_date').value=new Date().toISOString().slice(0,10);}catch(e){}
+  openModal('custModal');
+  setTimeout(()=>updateLinkBtn('f_documents'),50);
+}
+function openEdit(id){
+  if(!id){return;}
+  const c=findCust(id);
+  if(!c){toast('Customer record not found','error');return;}
+  const sb=document.getElementById('saveCustBtn');if(sb)sb.disabled=false;
+  editingCustId=custInternalId(c);
+  document.getElementById('custModalTitle').textContent='Edit Customer';
+  CUST_FIELDS.forEach(k=>{const el=document.getElementById('f_'+k);if(el&&el.tagName!=='SELECT')el.value=c[k]||'';});
+  populateSellerDropdown(c.seller_name||'');
+  openModal('custModal');
+  setTimeout(()=>updateLinkBtn('f_documents'),50);
+}
+function saveCust(){
+  const fvr=document.getElementById('f_fvr_id').value.trim().replace(/\s+/g,'-').toUpperCase();
+  const name=document.getElementById('f_name_docs').value.trim();
+  const selEl=document.getElementById('f_seller_name');const seller=(selEl?.value||'').trim();
+  const cap=document.getElementById('f_capacity').value.trim();
+  const date=document.getElementById('f_order_date').value;
+  if(!fvr||!name||!seller||!cap||!date){toast('Required: FVR ID, Name (Docs), Seller, Capacity, Date','error');return;}
+  if(isNaN(parseFloat(cap))||parseFloat(cap)<=0){toast('Capacity must be a valid number (e.g. 3, 5, 10)','error');return;}
+  const finalAmt=document.getElementById('f_final_amount').value.trim();
+  if(finalAmt&&(isNaN(parseFloat(finalAmt))||parseFloat(finalAmt)<0)){toast('Final Amount must be a valid number','error');return;}
+  const mob=document.getElementById('f_mobile').value.trim();
+  if(mob&&!/^[6-9][0-9]{9}$/.test(mob)){toast('Mobile must be a valid 10-digit Indian number','error');return;}
+  // Duplicate mobile warning — not a block (family members can share mobile)
+  if(mob){
+    const mobDup=customers.find(c=>c.mobile===mob&&custInternalId(c)!==editingCustId);
+    if(mobDup){
+      if(!confirm(`⚠ Mobile ${mob} is already used by:\n"${mobDup.name_docs}" (FVR: ${mobDup.fvr_id})\n\nSave anyway? (OK for family members sharing a number)`))return;
+    }
+  }
+  const obj={};
+  CUST_FIELDS.forEach(k=>{const el=document.getElementById('f_'+k);obj[k]=el?el.value.trim():'';});
+  // Always store FVR ID as uppercase
+  obj.fvr_id=fvr;
+  // Keep order_id blank if not entered — custInternalId() handles tracking key internally
+  const internalId=custInternalId(obj); // uses order_id if filled, else FVR-based key
+  // FVR duplicate check — case-insensitive, covers both add and edit
+  const fvrUpper=fvr.toUpperCase();
+  if(customers.find(c=>(c.fvr_id||'').toUpperCase()===fvrUpper&&custInternalId(c)!==editingCustId)){
+    toast('FVR ID "'+fvr+'" already exists — duplicate not allowed!','error');return;
+  }
+  const isCancelled=obj.work_status==='Cancelled';
+  if(isCancelled){
+    // ── Move to Cancelled: remove from customers+tracking, add to cancelledCustomers ──
+    if(editingCustId){
+      const prevIdx=customers.findIndex(c=>custInternalId(c)===editingCustId);
+      if(prevIdx!==-1){customers.splice(prevIdx,1);}
+      // Also remove from cancelledCustomers if editing a previously cancelled one
+      cancelledCustomers=cancelledCustomers.filter(x=>custInternalId(x)!==editingCustId&&custInternalId(x)!==internalId);
+    } else {
+      customers=customers.filter(x=>custInternalId(x)!==internalId);
+    }
+    // Remove tracking data
+    delete tracking[editingCustId||internalId];
+    // Remove from main Sheets tabs
+    delSheets('Customers',obj.fvr_id||internalId);
+    delSheets('Tracking',editingCustId||internalId);
+    // Upsert in cancelledCustomers
+    const existIdx=cancelledCustomers.findIndex(x=>custInternalId(x)===internalId);
+    if(existIdx!==-1)cancelledCustomers[existIdx]=obj; else cancelledCustomers.push(obj);
+    // Sync to CancelledOrders sheet tab
+    syncSheets('CancelledOrders',obj);
+    saveLocal();resetSyncTimer();
+    closeModal('custModal');
+    populateDashFilters();renderCustTable();renderTrackTable();renderDash();renderCancelledTable();
+    const cc2=document.getElementById('cancelledTabBtn');if(cc2)cc2.textContent='🚫 Cancelled ('+cancelledCustomers.length+')';
+    editingCustId=null;
+    toast('Order moved to Cancelled tab!','info');
+    return;
+  }
+  if(editingCustId){
+    const i=customers.findIndex(c=>custInternalId(c)===editingCustId);
+    if(i!==-1){
+      if(tracking[editingCustId]&&internalId!==editingCustId){tracking[internalId]=tracking[editingCustId];delete tracking[editingCustId];}
+      customers[i]=obj;
+    }
+    // If this was previously cancelled and is being restored, remove from cancelledCustomers
+    cancelledCustomers=cancelledCustomers.filter(x=>custInternalId(x)!==editingCustId&&custInternalId(x)!==internalId);
+    if(Object.keys(tracking).every(k=>k!==internalId))tracking[internalId]=defTrk(internalId);
+  }else{
+    customers.push(obj);
+    if(!tracking[internalId])tracking[internalId]=defTrk(internalId);
+  }
+  saveLocal();syncSheets('Customers',obj);resetSyncTimer();
+  closeModal('custModal');
+  populateDashFilters();renderCustTable();renderTrackTable();renderDash();renderCancelledTable();
+  const wasEditing=!!editingCustId;
+  editingCustId=null;
+  toast(wasEditing?'Customer updated!':'Customer added!','success');
+}
+function delCust(id){
+  if(!confirm('Delete this customer and all related data?'))return;
+  const c=findCust(id);if(!c)return;
+  const cid=custInternalId(c);
+  const fvr=c.fvr_id||'';
+  // Remove customer payments (match by fvr_id or order_id)
+  const removedPays=payments.filter(p=>(fvr&&p.fvr_id===fvr)||(cid&&p.order_id===cid));
+  payments=payments.filter(p=>!((fvr&&p.fvr_id===fvr)||(cid&&p.order_id===cid)));
+  removedPays.forEach(p=>delSheets('Payments',p.pay_id));
+  customers=customers.filter(x=>custInternalId(x)!==cid);
+  delete tracking[cid];
+  saveLocal();delSheets('Customers',fvr||cid);delSheets('Tracking',cid);
+  closeModal('custModal');closeModal('trkModal');closeModal('custViewModal');
+  renderCustTable();renderTrackTable();renderPayTable();renderDash();
+  toast('Customer and '+(removedPays.length?removedPays.length+' payment(s) ':'')+'deleted','info');
+}
+
+// ═══════════════════════════════════════
+// TRACKING MODAL
+// ═══════════════════════════════════════
+function openTrkModal(id){
+  trkEditId=id;
+  const c=findCust(id);if(!c)return;
+  const t=getTrk(id);
+  document.getElementById('trkTitle').textContent=c.name_docs||id;
+  document.getElementById('trkSub').textContent=`${c.fvr_id||''} · ${c.order_id&&!c.order_id.startsWith('TMP-')?c.order_id:'No Order ID'} · ${c.capacity||''}kW · ${c.seller_name||''}`;
+  document.getElementById('trkInfo').innerHTML=[
+    ['FVR ID',c.fvr_id],['Order ID',c.order_id&&!c.order_id.startsWith('TMP-')?c.order_id:'—'],
+    ['Loan Person',c.loan_person],['CA No.',c.ca_number],
+    ['Sub Div.',c.sub_division],['Seller',c.seller_name],
+    ['Capacity',`<span class="cap-tag">${c.capacity||'—'} kW</span>`],
+    ['Final Amt',fmt(c.final_amount)],['Date',fmtDate(c.order_date)],
+  ].map(([l,v])=>`<div class="ti-i"><div class="ti-l">${l}</div><div class="ti-v">${v||'—'}</div></div>`).join('');
+  const ls=t.loan_type||'';
+  const lsLabel={cash:'💵 Cash',loan_pending:'⏳ Loan Pending',approval_pending:'🔄 Approval Pending',loan_approved:'✅ Loan Approved','':'Not Set'};
+  const lsBC={cash:'b-upi',loan_pending:'b-pending',approval_pending:'b-pending',loan_approved:'b-done','':'b-na'};
+  const lsCardCls={cash:'st-cash',loan_pending:'st-loan_pending',approval_pending:'st-approval_pending',loan_approved:'st-loan_approved','':''};
+  const loanCard=`<div class="trk-stage st-loan_status_card ${lsCardCls[ls]}" id="sc-loan_status_card">
+    <div class="tsh"><div class="tsn">🏦 Loan Status</div><span class="badge ls-badge ${lsBC[ls]}" style="font-size:9px">${lsLabel[ls]}</span></div>
+    <div class="trk-btns" style="gap:6px;margin-bottom:0">
+      <button class="lsbtn lsbtn-cash ${ls==='cash'?'on':''}" data-val="cash" onclick="setLoanStatus('${id}','cash')">💵 Cash</button>
+      <button class="lsbtn lsbtn-pending ${ls==='loan_pending'?'on':''}" data-val="loan_pending" onclick="setLoanStatus('${id}','loan_pending')">⏳ Loan Pending</button>
+      <button class="lsbtn lsbtn-approval ${ls==='approval_pending'?'on':''}" data-val="approval_pending" onclick="setLoanStatus('${id}','approval_pending')">🔄 Approval Pending</button>
+      <button class="lsbtn lsbtn-approved ${ls==='loan_approved'?'on':''}" data-val="loan_approved" onclick="setLoanStatus('${id}','loan_approved')">✅ Loan Approved</button>
+      <button class="lsbtn lsbtn-na ${ls===''?'on':''}" data-val="" onclick="setLoanStatus('${id}','')">Clear</button>
+    </div>
+  </div>`;
+  document.getElementById('trkGrid').innerHTML=loanCard+STAGES.map(s=>{
+    const st=t[s.key+'_status']||'na';
+    const lb={done:'✓ Done',pending:'Pending',failed:'✗ Failed',na:'N/A',cash:'💵 Cash'};
+    const isBill=s.key==='bill1'||s.key==='bill2';
+    const isLoan=s.key==='loan';
+    const billNo=isBill?(t[s.key+'_billno']||''):'';
+    const billDone=isBill&&billNo.trim()!=='';
+    const eff=effStage(t,s);
+    return`<div class="trk-stage st-${eff}" id="sc-${s.key}">
+      <div class="tsh"><div class="tsn">${s.icon} ${s.label}</div><span class="badge ${stBC(eff)}" style="font-size:9px">${isBill?(billDone?'✓ '+billNo:lb[st]):lb[eff]||lb[st]}</span></div>
+      ${isBill?`
+      <div style="margin:8px 0 4px">
+        <label style="font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">Bill Number</label>
+        <input type="text" class="tdate" maxlength="10" placeholder="e.g. 123" value="${billNo}"
+          oninput="setBillNo('${id}','${s.key}',this.value)"
+          style="width:100%;margin-top:4px;font-family:var(--mono);font-size:14px;font-weight:700;text-align:center;letter-spacing:1px">
+      </div>
+      <div class="trk-btns" style="margin-top:4px">
+        <button class="stbtn stbtn-failed ${st==='failed'?'on':''}" onclick="setSt('${id}','${s.key}','failed')">✗ Failed</button>
+        <button class="stbtn stbtn-na ${st==='na'?'on':''}" onclick="setSt('${id}','${s.key}','na')">N/A</button>
+      </div>`:isLoan?`
+      <div class="trk-btns">
+        <button class="stbtn stbtn-done ${st==='done'?'on':''}" onclick="setSt('${id}','${s.key}','done')">✓ Done</button>
+        <button class="stbtn stbtn-pending ${st==='pending'?'on':''}" onclick="setSt('${id}','${s.key}','pending')">Pending</button>
+        <button class="stbtn" style="border-color:var(--teal);color:var(--teal);${st==='cash'?'background:var(--teal);color:#0b0e17;':''}" onclick="setSt('${id}','${s.key}','cash')">💵 Cash</button>
+        <button class="stbtn stbtn-failed ${st==='failed'?'on':''}" onclick="setSt('${id}','${s.key}','failed')">✗ Failed</button>
+        <button class="stbtn stbtn-na ${st==='na'?'on':''}" onclick="setSt('${id}','${s.key}','na')">N/A</button>
+      </div>`:`
+      <div class="trk-btns">
+        <button class="stbtn stbtn-done ${st==='done'?'on':''}" onclick="setSt('${id}','${s.key}','done')">✓ Done</button>
+        <button class="stbtn stbtn-pending ${st==='pending'?'on':''}" onclick="setSt('${id}','${s.key}','pending')">Pending</button>
+        <button class="stbtn stbtn-failed ${st==='failed'?'on':''}" onclick="setSt('${id}','${s.key}','failed')">✗ Failed</button>
+        <button class="stbtn stbtn-na ${st==='na'?'on':''}" onclick="setSt('${id}','${s.key}','na')">N/A</button>
+      </div>`}
+      <input type="date" class="tdate" value="${t[s.key+'_date']||''}" onchange="setTF('${id}','${s.key}_date',this.value)">
+      <textarea class="tnote" placeholder="Note…" onchange="setTF('${id}','${s.key}_note',this.value)">${t[s.key+'_note']||''}</textarea>
+    </div>`;
+  }).join('');
+  const tdb=document.getElementById('trkDelBtn');if(tdb)tdb.onclick=()=>delCust(id);
+  openModal('trkModal');
+}
+function setSt(id,key,status){
+  if(!tracking[id])tracking[id]=defTrk(id);
+  tracking[id][key+'_status']=status;
+  if((status==='done'||status==='cash')&&!tracking[id][key+'_date'])tracking[id][key+'_date']=new Date().toISOString().slice(0,10);
+  tracking[id].final_status=calcSt(tracking[id]);
+  trkUnsaved=true;
+  openTrkModal(id);
+}
+function setLoanStatus(id,val){
+  if(!tracking[id])tracking[id]=defTrk(id);
+  tracking[id].loan_type=val;
+  trkUnsaved=true;
+  // Update card in-place without full re-render
+  const card=document.getElementById('sc-loan_status_card');
+  if(card){
+    const lsMap={cash:'💵 Cash',loan_pending:'⏳ Loan Pending',approval_pending:'🔄 Approval Pending',loan_approved:'✅ Loan Approved','':{lbl:'—',cls:'st-na'}};
+    const clsMap={cash:'st-cash',loan_pending:'st-loan_pending',approval_pending:'st-approval_pending',loan_approved:'st-loan_approved','':''};
+    card.className='trk-stage st-loan_status_card '+(clsMap[val]||'');
+    const badge=card.querySelector('.ls-badge');
+    const lbl={cash:'💵 Cash',loan_pending:'⏳ Loan Pending',approval_pending:'🔄 Approval Pending',loan_approved:'✅ Loan Approved','':'Not Set'};
+    const bc={cash:'b-upi',loan_pending:'b-pending',approval_pending:'b-pending',loan_approved:'b-done','':'b-na'};
+    if(badge){badge.className='badge ls-badge '+bc[val];badge.textContent=lbl[val]||'Not Set';}
+    // highlight active button
+    card.querySelectorAll('.lsbtn').forEach(b=>{
+      const bv=b.dataset.val||'';
+      b.classList.toggle('on',bv===val);
+    });
+  }
+  const sh=document.getElementById('trkSaveHint');if(sh)sh.style.display='inline-flex';
+}
+let trkUnsaved=false;
+let trkStageFilter=null; // key of stage to filter pending, or null
+function setBillNo(id,key,val){
+  if(!tracking[id])tracking[id]=defTrk(id);
+  tracking[id][key+'_billno']=val.trim();
+  if(val.trim()&&!tracking[id][key+'_date'])tracking[id][key+'_date']=new Date().toISOString().slice(0,10);
+  tracking[id].final_status=calcSt(tracking[id]);
+  trkUnsaved=true;
+  // Update card visuals in-place (green when bill no entered)
+  const card=document.getElementById('sc-'+key);
+  if(card){
+    const billDone=val.trim()!=='';
+    const st=tracking[id][key+'_status']||'na';
+    const eff=effStage(tracking[id],STAGES.find(s=>s.key===key)||{key});
+    card.className='trk-stage st-'+eff;
+    const badge=card.querySelector('.badge');
+    if(badge){badge.className='badge '+stBC(eff);badge.textContent=val.trim()?'✓ '+val.trim():'Pending';}
+    // Update date input if auto-set
+    const dateInp=card.querySelector('input[type="date"]');
+    if(dateInp&&val.trim()&&!dateInp.value)dateInp.value=tracking[id][key+'_date']||'';
+  }
+  const sh=document.getElementById('trkSaveHint');if(sh)sh.style.display='inline-flex';
+}
+function setTF(id,field,val){if(!tracking[id])tracking[id]=defTrk(id);tracking[id][field]=val;tracking[id].final_status=calcSt(tracking[id]);trkUnsaved=true;const sb=document.getElementById('trkSaveHint');if(sb)sb.style.display='inline-flex';}
+function saveTrk(){
+  if(!trkEditId)return;
+  if(!tracking[trkEditId])tracking[trkEditId]=defTrk(trkEditId);
+  tracking[trkEditId].final_status=calcSt(tracking[trkEditId]);
+  saveLocal();syncSheets('Tracking',tracking[trkEditId]);resetSyncTimer();
+  trkUnsaved=false;const sh2=document.getElementById('trkSaveHint');if(sh2)sh2.style.display='none';
+  closeModal('trkModal');
+  renderCustTable();renderTrackTable();renderDash();
+  toast('Tracking saved!','success');
+}
+function closeTrkModal(){
+  if(trkUnsaved){
+    if(!confirm('You have unsaved changes in tracking. Close without saving?'))return;
+    // Reload tracking from saved state to discard changes
+    loadLocal();
+  }
+  trkUnsaved=false;
+  const sh=document.getElementById('trkSaveHint');if(sh)sh.style.display='none';
+  closeModal('trkModal');
+}
+function editFromTrk(){trkUnsaved=false;closeModal('trkModal');openEdit(trkEditId);}
+
+// ═══════════════════════════════════════
+// PAYMENTS
+// ═══════════════════════════════════════
+function openAddPay(){
+  editingPayId=null;
+  setTimeout(()=>updateLinkBtn('p_proof'),50);
+  document.getElementById('payModalTitle').textContent='Add Payment';
+  ['p_fvr_id','p_order_id','p_cust_name','p_payee_name','p_date','p_amount','p_type','p_proof','p_notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('p_date').value=new Date().toISOString().slice(0,10);
+  openModal('payModal');
+}
+function autoFillPayCust(){
+  const fvr=document.getElementById('p_fvr_id').value.trim();
+  const oid=document.getElementById('p_order_id').value.trim();
+  const c=customers.find(c=>(fvr&&c.fvr_id===fvr)||(oid&&(c.order_id===oid||c.order_id===('TMP-'+oid))));
+  if(c){
+    const cn=document.getElementById('p_cust_name');
+    if(cn&&!cn.value)cn.value=c.name_docs||c.loan_person||'';
+    if(fvr&&!document.getElementById('p_order_id').value&&c.order_id&&!c.order_id.startsWith('TMP-'))
+      document.getElementById('p_order_id').value=c.order_id;
+    if(oid&&!document.getElementById('p_fvr_id').value)
+      document.getElementById('p_fvr_id').value=c.fvr_id||'';
+  }
+}
+function openEditPay(payId){
+  if(!payId){return;}
+  const p=payments.find(x=>x.pay_id===payId);
+  if(!p){toast('Payment record not found','error');return;}
+  editingPayId=payId;
+  document.getElementById('payModalTitle').textContent='Edit Payment';
+  ['fvr_id','order_id','cust_name','payee_name','date','amount','type','proof','notes'].forEach(k=>{
+    const el=document.getElementById('p_'+k);if(el)el.value=p[k]||'';
+  });
+  openModal('payModal');
+  setTimeout(()=>updateLinkBtn('p_proof'),50);
+}
+function savePay(){
+  const fvr=document.getElementById('p_fvr_id').value.trim();
+  const amount=document.getElementById('p_amount').value.trim();
+  const type=document.getElementById('p_type').value.trim();
+  const date=document.getElementById('p_date').value.trim();
+  const payee=document.getElementById('p_payee_name').value.trim();
+  if(!fvr||!amount||!type||!date||!payee){toast('Required: FVR ID, Payee, Date, Amount, Type','error');return;}
+  if(isNaN(parseFloat(amount))||parseFloat(amount)<=0){toast('Amount must be a valid positive number','error');return;}
+  if(date>new Date().toISOString().slice(0,10)){if(!confirm('Payment date is in the future. Continue?'))return;}
+  const obj={
+    pay_id:editingPayId||('PAY-'+uid()),
+    fvr_id:fvr,
+    order_id:document.getElementById('p_order_id').value.trim(),
+    cust_name:document.getElementById('p_cust_name').value.trim(),
+    payee_name:payee,date,amount,type,
+    proof:document.getElementById('p_proof').value.trim(),
+    notes:document.getElementById('p_notes').value.trim(),
+  };
+  if(editingPayId){const i=payments.findIndex(x=>x.pay_id===editingPayId);if(i!==-1)payments[i]=obj;}
+  else payments.push(obj);
+  saveLocal();syncSheets('Payments',obj);resetSyncTimer();
+  closeModal('payModal');
+  renderPayTable();renderDash();
+  toast(editingPayId?'Payment updated!':'Payment added!','success');
+}
+function delPay(payId){
+  if(!payId||!payments.find(p=>p.pay_id===payId)){toast('Payment not found','error');return;}
+  if(!confirm('Delete this payment?'))return;
+  payments=payments.filter(p=>p.pay_id!==payId);
+  saveLocal();delSheets('Payments',payId);
+  renderPayTable();renderDash();
+  toast('Payment deleted','info');
+}
+
+// ═══════════════════════════════════════
+// TAB SWITCH
+// ═══════════════════════════════════════
+function switchTab(name){
+  closeDd();
+  document.querySelectorAll('.tab-page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  const pg=document.getElementById('tab-'+name);if(pg)pg.classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b=>{
+    if(b.getAttribute('data-tab')===name) b.classList.add('active');
+  });
+  const addBtn=document.getElementById('mainAddBtn');
+  if(addBtn){
+    if(name==='payment'){addBtn.style.display='';addBtn.innerHTML='+ Add Payment';addBtn.onclick=openAddPay;}
+    else if(name==='cancelled'){addBtn.style.display='none';}
+    else{addBtn.style.display='';addBtn.innerHTML='+ Add Customer';addBtn.onclick=openAddCust;}
+  }
+  // Update export button label to match active tab
+  const expBtn=document.getElementById('exportBtn');
+  if(expBtn){
+    const lbl={dashboard:'⬇ Export',customers:'⬇ Export Customers',tracking:'⬇ Export Tracking',payment:'⬇ Export Payments',cancelled:'⬇ Export Cancelled'};
+    expBtn.textContent=lbl[name]||'⬇ Export';
+    expBtn.onclick=()=>exportFiltered(name==='dashboard'?'cust':name);
+  }
+  if(name==='dashboard'){populateDashFilters();renderDash();}
+  if(name==='customers')renderCustTable();
+  if(name==='tracking')renderTrackTable();
+  if(name==='payment')renderPayTable();
+  if(name==='cancelled')renderCancelledTable();
+}
+
+// ═══════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════
+function _csvRow(r){return r.map(x=>`"${String(x===null||x===undefined?'':x).replace(/"/g,'""').replace(/[\r\n]+/g,' ')}"`).join(',');}
+function _download(csv,name){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=name;a.click();}
+function exportCSV(){exportFiltered('cust');}
+function exportFiltered(ctx){
+  // Normalise tab names to internal contexts
+  const ctxMap={customers:'cust',tracking:'track',payment:'pay',dashboard:'cust'};
+  ctx=ctxMap[ctx]||ctx;
+  const date=new Date().toISOString().slice(0,10);
+  if(ctx==='cust'||ctx==='cancelled'){
+    const data=ctx==='cancelled'?sortData(filterData('cancelled'),'cancelled'):sortData(filterData('cust'),'cust');
+    const h=[...CUST_FIELDS,'Final Status','Loan Status','Payment Received','Balance'];
+    const rows=data.map(c=>{
+      const t=getTrk(custInternalId(c));const rec=payReceived(c);const bal=(parseFloat(c.final_amount)||0)-rec;
+      const lsLabel={cash:'Cash',loan_pending:'Loan Pending',approval_pending:'Approval Pending',loan_approved:'Loan Approved','':''};
+      return[...CUST_FIELDS.map(k=>c[k]||''),t.final_status||'',lsLabel[t.loan_type||'']||'',rec,bal];
+    });
+    const csv=[h,...rows].map(_csvRow).join('\r\n');
+    _download(csv,(ctx==='cancelled'?'KalptaruCRM_Cancelled_':'KalptaruCRM_Customers_')+date+'.csv');
+    toast('Exported '+data.length+' rows!','success');
+  } else if(ctx==='tracking'){
+    const data=sortData(filterData('track'),'track');
+    const stageHeaders=STAGES.map(s=>s.label);
+    const h=['Order ID','FVR ID','Name','Date','Seller','kW',...stageHeaders,'Bill 1 No','Bill 2 No','Final Status','Loan Status'];
+    const rows=data.map(c=>{
+      const t=getTrk(custInternalId(c));
+      const lsLabel={cash:'Cash',loan_pending:'Loan Pending',approval_pending:'Approval Pending',loan_approved:'Loan Approved','':''};
+      return[c.order_id||'',c.fvr_id||'',c.name_docs||'',c.order_date||'',c.seller_name||'',c.capacity||'',...STAGES.map(s=>effStage(t,s)||''),t.bill1_billno||'',t.bill2_billno||'',t.final_status||'',lsLabel[t.loan_type||'']||''];
+    });
+    const csv=[h,...rows].map(_csvRow).join('\r\n');
+    _download(csv,'KalptaruCRM_Tracking_'+date+'.csv');
+    toast('Exported '+data.length+' rows!','success');
+  } else if(ctx==='payment'){
+    const data=sortData(filterData('pay'),'pay');
+    const h=[...PAY_FIELDS];
+    const rows=data.map(p=>PAY_FIELDS.map(k=>p[k]||''));
+    const csv=[h,...rows].map(_csvRow).join('\r\n');
+    _download(csv,'KalptaruCRM_Payments_'+date+'.csv');
+    toast('Exported '+data.length+' rows!','success');
+  } else {
+    exportFiltered('cust');
+  }
+}
+
+// ═══════════════════════════════════════
+// SHEETS
+// ═══════════════════════════════════════
+function openSetup(){
+  if(sheetsUrl)document.getElementById('sheetsUrlInp').value=sheetsUrl;
+  const un=localStorage.getItem('kcrm_username')||'';
+  const ui=document.getElementById('usernameInp');if(ui)ui.value=un;
+  const cc=document.getElementById('cloudinaryCloud');if(cc)cc.value=cloudinaryCloud;
+  const cp=document.getElementById('cloudinaryPreset');if(cp)cp.value=cloudinaryPreset;
+  openModal('setupModal');
+}
+function connectSheets(){
+  const url=document.getElementById('sheetsUrlInp').value.trim();
+  const uname=(document.getElementById('usernameInp')?.value||'').trim();
+  if(uname){localStorage.setItem('kcrm_username',uname);}
+  // Save Cloudinary settings
+  const cloud=(document.getElementById('cloudinaryCloud')?.value||'').trim();
+  const preset=(document.getElementById('cloudinaryPreset')?.value||'').trim();
+  if(cloud){cloudinaryCloud=cloud;localStorage.setItem('kcrm_cloud',cloud);}
+  if(preset){cloudinaryPreset=preset;localStorage.setItem('kcrm_preset',preset);}
+  if(cloud&&preset){toast('✓ Cloudinary upload configured — 📎 Upload button now works!','success');}
+  if(!url){renderGreeting();closeModal('setupModal');if(uname&&!cloud)toast('Name saved — '+getGreeting()+', '+uname+'!','success');return;}
+  if(!url.startsWith('https://script.google.com/macros/s/')){
+    toast('URL must start with https://script.google.com/macros/s/','error');return;
+  }
+  sheetsUrl=url;
+  localStorage.setItem('kcrm_url',url);
+  updateSheetsUI(true);
+  closeModal('setupModal');
+  renderGreeting();
+  toast('Connected! Loading data…','success');
+  loadFromSheets();
+}
+function updateSheetsUI(on){
+  document.getElementById('sdot').className='sdot'+(on?' on':'');
+  document.getElementById('sheetsLbl').textContent=on?'Sheets Connected':'Connect Sheets';
+  const sc=document.getElementById('syncControls');
+  if(sc)sc.style.display=on?'flex':'none';
+  if(on&&autoSyncInterval===null&&document.getElementById('autoSyncChk')?.checked){
+    startAutoSync();
+  }
+}
+
+// ── Two-way sync state ──────────────────────────────────
+let autoSyncInterval = null;
+let lastSyncTime = null;
+let isSyncing = false;
+
+function updateLastSyncLabel(){
+  const el=document.getElementById('lastSyncLbl');
+  if(!el)return;
+  if(!lastSyncTime){el.textContent='Never synced';return;}
+  const diff=Math.round((Date.now()-lastSyncTime)/1000);
+  if(diff<60)el.textContent='Synced '+diff+'s ago';
+  else if(diff<3600)el.textContent='Synced '+(Math.round(diff/60))+'m ago';
+  else el.textContent='Synced '+(Math.round(diff/3600))+'h ago';
+}
+setInterval(updateLastSyncLabel,10000);
+
+// ── PULL: Google Sheets → CRM ───────────────────────────
+async function pullFromSheets(){
+  if(!sheetsUrl){toast('Connect Google Sheets first','error');return;}
+  if(isSyncing)return;
+  // Warn if edit modal open — pulling will overwrite unsaved form data
+  const editModals=['custModal','payModal','trkModal'];
+  const anyOpen=editModals.some(id=>document.getElementById(id)?.classList.contains('open'));
+  if(anyOpen){
+    if(!confirm('You have an unsaved form open.\n\nPulling from Sheets will overwrite any unsaved changes.\n\nContinue?'))return;
+  }
+  isSyncing=true;
+  // ── BACKUP before pull so user can undo ──────────────────────
+  try{
+    localStorage.setItem('kcrm_backup_c',JSON.stringify(customers));
+    localStorage.setItem('kcrm_backup_t',JSON.stringify(tracking));
+    localStorage.setItem('kcrm_backup_p',JSON.stringify(payments));
+    localStorage.setItem('kcrm_backup_ts',Date.now().toString());
+  }catch(e){console.warn('backup failed',e);}
+  const btn=document.getElementById('pullBtn');
+  if(btn){btn.disabled=true;btn.textContent='⬇ Pulling…';}
+  try{
+    const load=async(tab)=>{
+      const r=await fetch(sheetsUrl,{method:'POST',body:JSON.stringify({action:'load',tab})});
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      return r.json();
+    };
+    const [d1,d2,d3,d4]=await Promise.all([load('Customers'),load('Tracking'),load('Payments'),load('CancelledOrders')]);
+    // ── SAFETY: warn if Sheets has far fewer customers than CRM ─
+    // (Now informational only — CRM data is never removed by pull)
+    if(d1.rows?.length>0 && customers.length>0){
+      const incoming=d1.rows.filter(r=>String(r[1]||'').trim()).length;
+      const lost=customers.length-incoming;
+      if(lost>2)console.info('[KalptaruCRM] Sheets has fewer rows than CRM — CRM-only records will be preserved and re-synced to Sheets.');
+    }
+    let changes=0;
+    if(d1.rows?.length){
+      const rawCust=d1.rows.map(row=>{const o={};CUST_FIELDS.forEach((h,i)=>{let v=String(row[i]||'');if(h==='order_date')v=cleanDate(v);if(h==='fvr_id')v=v.trim().toUpperCase();o[h]=v;});return o;});
+      // Deduplicate by FVR ID — keep first occurrence
+      const seenFvr=new Set();
+      const newCust=rawCust.filter(c=>{
+        const fvr=(c.fvr_id||'').trim().toUpperCase();
+        if(!fvr)return true; // no FVR — keep but flag
+        if(seenFvr.has(fvr))return false; // duplicate — skip
+        seenFvr.add(fvr);return true;
+      });
+      const dupes=rawCust.length-newCust.length;
+      if(dupes>0)toast('⚠ Skipped '+dupes+' duplicate FVR ID(s) from Sheets','error');
+      // UNION MERGE: update matching records, keep CRM-only records, add Sheets-only records
+      // Rule: data in CRM is NEVER deleted by a pull — Sheets is additive only
+      const sheetsMap=new Map(newCust.map(sc=>[(sc.fvr_id||'').toUpperCase(),sc]));
+      const merged=[];
+      const seenInMerge=new Set();
+      // 1. Go through all CRM customers — update from Sheets if match, keep as-is if no match
+      customers.forEach(lc=>{
+        const fvr=(lc.fvr_id||'').toUpperCase();
+        const sc=sheetsMap.get(fvr);
+        seenInMerge.add(fvr);
+        if(!sc){merged.push(lc);return;} // CRM-only — KEEP, don't delete
+        // Merge fields: Sheets wins if non-empty, local wins if Sheets empty
+        const out={};
+        CUST_FIELDS.forEach(f=>{
+          const sv=String(sc[f]||'').trim();
+          const lv=String(lc[f]||'').trim();
+          out[f]=sv!==''?sv:lv;
+        });
+        merged.push(out);
+      });
+      // 2. Add Sheets-only customers (new records not in CRM)
+      newCust.forEach(sc=>{
+        const fvr=(sc.fvr_id||'').toUpperCase();
+        if(!seenInMerge.has(fvr))merged.push(sc);
+      });
+      let rescued=merged.length-newCust.length;
+      if(rescued>0)toast('✓ Protected '+rescued+' CRM-only customer(s) from being removed','info');
+      if(JSON.stringify(merged)!==JSON.stringify(customers)){customers=merged;changes++;}
+    }
+    if(d2.rows?.length){
+      const newTrk={};
+      d2.rows.forEach(row=>{const o={};TRK_HDR.forEach((h,i)=>{let v=String(row[i]||'');if(h.endsWith('_date'))v=cleanDate(v);o[h]=v;});if(o.order_id)newTrk[o.order_id]=o;});
+      // Merge tracking — keep local notes/dates if Sheets field empty
+      const mergedTrk={};
+      const allKeys=new Set([...Object.keys(newTrk),...Object.keys(tracking)]);
+      allKeys.forEach(k=>{
+        const sT=newTrk[k],lT=tracking[k];
+        if(!sT){mergedTrk[k]=lT;return;} // only local — keep
+        if(!lT){mergedTrk[k]=sT;return;} // only remote — take
+        const out={};
+        TRK_HDR.forEach(f=>{const sv=String(sT[f]||'').trim();const lv=String(lT[f]||'').trim();out[f]=sv!==''?sv:lv;});
+        mergedTrk[k]=out;
+      });
+      if(JSON.stringify(mergedTrk)!==JSON.stringify(tracking)){tracking=mergedTrk;changes++;}
+    }
+    if(d3.rows?.length){
+      const newPay=d3.rows.map(row=>{const o={};PAY_FIELDS.forEach((h,i)=>{let v=String(row[i]||'');if(h==='date')v=cleanDate(v);o[h]=v;});return o;});
+      // UNION MERGE: CRM payments never deleted by pull
+      const sheetsPayMap=new Map(newPay.filter(p=>p.pay_id).map(p=>[p.pay_id,p]));
+      const mergedPay=[];
+      const seenPay=new Set();
+      // Update matching CRM payments, keep CRM-only ones
+      payments.forEach(lp=>{
+        const pid=lp.pay_id;
+        const sp=pid?sheetsPayMap.get(pid):null;
+        if(pid)seenPay.add(pid);
+        if(!sp){mergedPay.push(lp);return;} // CRM-only — keep
+        const out={};
+        PAY_FIELDS.forEach(f=>{const sv=String(sp[f]||'').trim();const lv=String(lp[f]||'').trim();out[f]=sv!==''?sv:lv;});
+        mergedPay.push(out);
+      });
+      // Add Sheets-only payments (new ones)
+      newPay.forEach(sp=>{if(sp.pay_id&&!seenPay.has(sp.pay_id))mergedPay.push(sp);});
+      if(JSON.stringify(mergedPay)!==JSON.stringify(payments)){payments=mergedPay;changes++;}
+    }
+    if(d4&&d4.rows?.length){
+      const newCan=d4.rows.map(row=>{const o={};CUST_FIELDS.forEach((h,i)=>{let v=String(row[i]||'');if(h==='order_date')v=cleanDate(v);if(h==='fvr_id')v=v.trim().toUpperCase();o[h]=v;});return o;});
+      const canMap=new Map(newCan.map(sc=>[(sc.fvr_id||'').toUpperCase(),sc]));
+      const mergedCan=[];const seenCan=new Set();
+      cancelledCustomers.forEach(lc=>{const fvr=(lc.fvr_id||'').toUpperCase();const sc=canMap.get(fvr);seenCan.add(fvr);if(!sc){mergedCan.push(lc);return;}const out={};CUST_FIELDS.forEach(f=>{const sv=String(sc[f]||'').trim();const lv=String(lc[f]||'').trim();out[f]=sv!==''?sv:lv;});mergedCan.push(out);});
+      newCan.forEach(sc=>{const fvr=(sc.fvr_id||'').toUpperCase();if(!seenCan.has(fvr))mergedCan.push(sc);});
+      if(JSON.stringify(mergedCan)!==JSON.stringify(cancelledCustomers)){cancelledCustomers=mergedCan;changes++;}
+    }
+    integrityCheck();
+    saveLocal();
+    populateDashFilters();renderDash();renderCustTable();renderTrackTable();renderPayTable();renderCancelledTable();
+    lastSyncTime=Date.now();
+    updateLastSyncLabel();
+    updateSheetsUI(true);
+    showUndoBtn(true);
+    // Re-sync any CRM-only records back to Sheets silently (they were missing from Sheet)
+    if(d1.rows?.length){
+      const sheetsF=new Set(d1.rows.map(r=>String(r[1]||'').trim().toUpperCase()));
+      customers.forEach(c=>{if(c.fvr_id&&!sheetsF.has(c.fvr_id.toUpperCase()))syncSheets('Customers',c);});
+    }
+    if(d3.rows?.length){
+      const sheetsP=new Set(d3.rows.map(r=>String(r[0]||'').trim()));
+      payments.forEach(p=>{if(p.pay_id&&!sheetsP.has(p.pay_id))syncSheets('Payments',p);});
+    }
+    if(changes>0)toast('✓ Pulled — '+customers.length+' customers, '+payments.length+' payments ('+changes+' tab(s) updated) — Undo available','success');
+    else toast('✓ Already up to date — no changes','success');
+  }catch(e){
+    updateSheetsUI(false);
+    toast('Pull failed: '+e.message,'error');
+    console.error('pullFromSheets:',e);
+  }finally{
+    isSyncing=false;
+    if(btn){btn.disabled=false;btn.textContent='⬇ Pull';}
+  }
+}
+
+// ── PUSH: CRM → Google Sheets (full overwrite) ──────────
+async function pushToSheets(){
+  if(!sheetsUrl){toast('Connect Google Sheets first','error');return;}
+  if(isSyncing)return;
+  if(!confirm('Push ALL CRM data to Google Sheets?\n\nTracking sheet will be cleared and rewritten (fixes column issues).\nCustomers and Payments will be updated in place.'))return;
+  isSyncing=true;
+  const btn=document.getElementById('pushBtn');
+  if(btn){btn.disabled=true;btn.textContent='⬆ Pushing…';}
+  try{
+    const post=async(body)=>{await fetch(sheetsUrl,{method:'POST',body:JSON.stringify(body)});};
+    // Only clear Tracking — it has billno column that may be shifted in old sheets
+    await post({action:'clearSheet',tab:'Tracking',headers:TRK_HDR});
+    // Push all data
+    let pushed=0;
+    for(const c of customers){await syncSheets('Customers',c);pushed++;}
+    for(const t of Object.values(tracking)){await syncSheets('Tracking',t);pushed++;}
+    for(const p of payments){await syncSheets('Payments',p);pushed++;}
+    lastSyncTime=Date.now();
+    updateLastSyncLabel();
+    updateSheetsUI(true);
+    toast('✓ Pushed '+pushed+' records — Tracking columns fixed','success');
+  }catch(e){
+    toast('Push failed: '+e.message,'error');
+    console.error('pushToSheets:',e);
+  }finally{
+    isSyncing=false;
+    if(btn){btn.disabled=false;btn.textContent='⬆ Push';}
+  }
+}
+
+// ── AUTO SYNC: pull every 2 minutes ────────────────────
+function toggleAutoSync(enabled){
+  localStorage.setItem('kcrm_autosync', enabled?'1':'0');
+  if(enabled){
+    startAutoSync();
+    toast('Auto-sync ON — pulls from Sheets every 2 minutes','success');
+  }else{
+    stopAutoSync();
+    toast('Auto-sync OFF','info');
+  }
+}
+function startAutoSync(){
+  if(autoSyncInterval)clearInterval(autoSyncInterval);
+  autoSyncInterval=setInterval(()=>{
+    if(!sheetsUrl||isSyncing)return;
+    // Never auto-pull while user has an edit modal open — would wipe unsaved data
+    const editModals=['custModal','payModal','trkModal'];
+    const anyOpen=editModals.some(id=>document.getElementById(id)?.classList.contains('open'));
+    if(anyOpen){
+      const lbl=document.getElementById('lastSyncLbl');
+      if(lbl)lbl.textContent='Paused — close form to sync';
+      return;
+    }
+    pullFromSheets();
+  },2*60*1000); // every 2 minutes
+}
+// Call after every save — resets the 2-min timer so pull never fires immediately after a write
+function resetSyncTimer(){
+  if(autoSyncInterval)startAutoSync();
+}
+function showUndoBtn(show){
+  const btn=document.getElementById('undoPullBtn');
+  if(btn)btn.style.display=show?'inline-block':'none';
+}
+function undoPull(){
+  try{
+    const bc=localStorage.getItem('kcrm_backup_c');
+    const bt=localStorage.getItem('kcrm_backup_t');
+    const bp=localStorage.getItem('kcrm_backup_p');
+    const ts=localStorage.getItem('kcrm_backup_ts');
+    if(!bc){toast('No backup found — nothing to undo','error');return;}
+    const when=ts?new Date(parseInt(ts)).toLocaleTimeString('en-IN'):'unknown time';
+    if(!confirm('Restore your data from before the last pull ('+when+')?\n\nThis will undo all changes pulled from Sheets.'))return;
+    customers=JSON.parse(bc);
+    tracking=JSON.parse(bt||'{}');
+    payments=JSON.parse(bp||'[]');
+    saveLocal();
+    integrityCheck();
+    populateDashFilters();renderDash();renderCustTable();renderTrackTable();renderPayTable();
+    showUndoBtn(false);
+    toast('✓ Restored to '+when+' — '+customers.length+' customers recovered','success');
+  }catch(e){toast('Restore failed: '+e.message,'error');}
+}
+function stopAutoSync(){
+  if(autoSyncInterval){clearInterval(autoSyncInterval);autoSyncInterval=null;}
+}
+
+async function syncSheets(tab,obj){
+  if(!sheetsUrl)return;
+  const headers=tab==='Customers'||tab==='CancelledOrders'?CUST_FIELDS:tab==='Tracking'?TRK_HDR:PAY_FIELDS;
+  const row=headers.map(h=>(obj[h]!==undefined&&obj[h]!==null)?String(obj[h]):'');
+  try{
+    const res=await fetch(sheetsUrl,{method:'POST',body:JSON.stringify({action:'save',tab,headers,row})});
+    if(!res.ok)throw new Error('HTTP '+res.status);
+  }catch(e){
+    console.warn('Sheets sync failed:',e.message);
+    document.getElementById('sdot').className='sdot';
+    document.getElementById('sheetsLbl').textContent='Sync Failed — Retry';
+  }
+}
+async function delSheets(tab,id){if(!sheetsUrl)return;try{await fetch(sheetsUrl,{method:'POST',body:JSON.stringify({action:'delete',tab,id})});}catch(e){}}
+async function loadFromSheets(){
+  await pullFromSheets();
+}
+function copyCode(){
+  const el=document.getElementById('appsCode');
+  if(!el)return;
+  const text=el.textContent||el.innerText||'';
+  navigator.clipboard.writeText(text.trim()).then(()=>{
+    toast('✓ Script copied! Now paste in Apps Script','success');
+    const btn=document.getElementById('copyScriptBtn');
+    if(btn){btn.textContent='✅ Copied!';btn.style.background='var(--green)';setTimeout(()=>{btn.textContent='📋 Copy Script';btn.style.background='';},3000);}
+  }).catch(()=>{
+    // Fallback for older browsers
+    const ta=document.createElement('textarea');
+    ta.value=text.trim();ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy');toast('✓ Script copied!','success');}
+    catch(e){toast('Please manually select and copy the script text','error');}
+    document.body.removeChild(ta);
+  });
+}
+
+// ═══════════════════════════════════════
+// MODAL / TOAST
+// ═══════════════════════════════════════
+function openModal(id){closeDd();const el=document.getElementById(id);if(!el)return;el.classList.add('open');}
+function closeModal(id){const el=document.getElementById(id);if(el)el.classList.remove('open');}
+function toast(msg,type='info'){const el=document.createElement('div');el.className=`toast t-${type.charAt(0)}`;el.textContent=(type==='success'?'✓ ':type==='error'?'✕ ':'ℹ ')+msg;document.getElementById('toastWrap').appendChild(el);setTimeout(()=>el.remove(),3200);}
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+
+// ═══════════════════════════════════════
+// SAMPLE DATA
+// ═══════════════════════════════════════
+
+
+
+// ═══════════════════════════════════════
+// FILE UPLOAD TO GOOGLE DRIVE
+// ═══════════════════════════════════════
+async function uploadFileToDrive(input, targetId, progId){
+  const file = input.files[0];
+  if(!file){return;}
+
+  const maxMB = 10;
+  if(file.size > maxMB*1024*1024){toast('File too large — max '+maxMB+'MB','error');input.value='';return;}
+
+  // Check if Cloudinary is configured
+  const useCloudinary = cloudinaryCloud && cloudinaryPreset;
+  const useGDrive = !!sheetsUrl;
+
+  if(!useCloudinary && !useGDrive){
+    toast('Setup upload first — click ⚙ and enter Cloudinary Cloud Name + Preset (free)','error');
+    input.value='';return;
+  }
+
+  // Show progress
+  const prog=document.getElementById(progId);
+  const fill=document.getElementById(progId.replace('Prog','Fill'));
+  const lbl=document.getElementById(progId.replace('Prog','Lbl'));
+  if(prog)prog.classList.add('show');
+  if(fill)fill.style.width='10%';
+  if(lbl)lbl.textContent='Uploading…';
+
+  try{
+    let url='';
+
+    // ── METHOD 1: Cloudinary (preferred — no permission issues) ──────────
+    if(useCloudinary){
+      if(lbl)lbl.textContent='Uploading to Cloudinary…';
+      if(fill)fill.style.width='30%';
+
+      const formData=new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', cloudinaryPreset);
+      formData.append('folder','KalptaruCRM');
+
+      // Use correct Cloudinary endpoint based on file type
+      const isPdf = file.type==='application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+      const endpoint = isPdf ? 'raw' : 'image';
+      
+      const res=await fetch(`https://api.cloudinary.com/v1_1/${cloudinaryCloud}/${endpoint}/upload`,{
+        method:'POST',
+        body: formData
+      });
+      if(fill)fill.style.width='80%';
+      const data=await res.json();
+      if(data.error)throw new Error(data.error.message||'Cloudinary upload failed');
+      
+      // Use secure_url exactly as returned — do NOT modify it
+      url = data.secure_url;
+    }
+
+    // ── METHOD 2: Google Drive via Apps Script (fallback) ────────────────
+    else if(useGDrive){
+      if(lbl)lbl.textContent='Reading file…';
+      const base64=await new Promise((res,rej)=>{
+        const r=new FileReader();
+        r.onload=()=>res(r.result.split(',')[1]);
+        r.onerror=()=>rej(new Error('Could not read file'));
+        r.readAsDataURL(file);
+      });
+      if(fill)fill.style.width='40%';
+      if(lbl)lbl.textContent='Uploading to Drive…';
+
+      let result=null;
+      try{
+        const resp=await fetch(sheetsUrl,{method:'POST',redirect:'follow',
+          headers:{'Content-Type':'text/plain'},
+          body:JSON.stringify({action:'uploadFile',filename:file.name,mimeType:file.type||'application/octet-stream',data:base64})
+        });
+        const text=await resp.text();
+        const match=text.match(/\{[\s\S]*\}/);
+        if(match)result=JSON.parse(match[0]);
+      }catch(e){console.warn('Drive upload failed:',e);}
+
+      if(!result?.ok)throw new Error(result?.error||'Google Drive upload failed — please set up Cloudinary in ⚙ Settings for reliable upload');
+      url=result.url;
+    }
+
+    // Save URL
+    if(fill)fill.style.width='100%';
+    const urlField=document.getElementById(targetId);
+    if(urlField){urlField.value=url;updateLinkBtn(targetId);}
+    if(lbl)lbl.textContent='✓ '+file.name;
+    toast('✓ File uploaded successfully!','success');
+    setTimeout(()=>{if(prog)prog.classList.remove('show');if(fill)fill.style.width='0%';},3000);
+
+  }catch(err){
+    if(prog)prog.classList.remove('show');
+    if(fill)fill.style.width='0%';
+    toast('Upload failed: '+err.message,'error');
+    console.error('Upload error:',err);
+  }
+  input.value='';
+}
+
+function pasteLink(fieldId){
+  if(navigator.clipboard && navigator.clipboard.readText){
+    navigator.clipboard.readText().then(text=>{
+      text=text.trim();
+      if(!text){toast('Clipboard is empty — copy a link first','error');return;}
+      if(!text.startsWith('http')){toast('That does not look like a link — copy a Google Drive or web link','error');return;}
+      const el=document.getElementById(fieldId);
+      if(el){el.value=text;updateLinkBtn(fieldId);toast('✓ Link pasted!','success');}
+    }).catch(()=>{
+      const el=document.getElementById(fieldId);
+      if(el){if(typeof el.focus==='function')el.focus();if(typeof el.select==='function')el.select();}
+      toast('Press Ctrl+V to paste your link','info');
+    });
+  } else {
+    const el=document.getElementById(fieldId);
+    if(el){if(typeof el.focus==='function')el.focus();if(typeof el.select==='function')el.select();}
+    toast('Press Ctrl+V to paste your link','info');
+  }
+}
+
+function openProofLink(fieldId){
+  let url = (document.getElementById(fieldId)||{}).value||'';
+  if(!url || !url.startsWith('http')){ toast('No valid link to open','error'); return false; }
+  const isCloudinary = url.includes('cloudinary.com');
+  const isPdf = url.includes('/raw/upload/') || url.toLowerCase().includes('.pdf');
+  if(isPdf && isCloudinary){
+    // fl_inline tells Cloudinary to serve PDF inline so browser opens it directly
+    url = url.replace('/raw/upload/', '/raw/upload/fl_inline/');
+  }
+  window.open(url,'_blank');
+  return false;
+}
+
+function updateLinkBtn(fieldId){
+  const url = (document.getElementById(fieldId)||{}).value||'';
+  const btn = document.getElementById(fieldId+'_link');
+  if(!btn) return;
+  const valid = url.startsWith('http');
+  btn.classList.toggle('disabled', !valid);
+  btn.style.color = valid ? 'var(--solar)' : '';
+}
+
+
+
+// ═══════════════════════════════════════
+// CUSTOMER DETAIL VIEW
+// ═══════════════════════════════════════
+let custViewId=null;
+
+function openCustView(id){
+  const cust=findCust(id);
+  if(!cust)return;
+  custViewId=id;
+  document.getElementById('cvTitle').textContent=cust.name_docs||'Customer Details';
+  document.getElementById('cvSub').textContent=`${cust.fvr_id||''}${cust.order_id&&!cust.order_id.startsWith('TMP-')?' · '+cust.order_id:''} · ${cust.capacity||''}kW`;
+  const cvDelBtn=document.getElementById('cvDelBtn');
+  if(cvDelBtn)cvDelBtn.onclick=()=>{closeModal('custViewModal');delCust(id);};
+
+  const val=(v,fmt)=>v?`<span class="cdv-val">${fmt?fmt(v):esc(v)}</span>`:`<span class="cdv-val empty">—</span>`;
+  const rec=payReceived(cust);
+  const fin=parseFloat(cust.final_amount)||0;
+  const bal=fin-rec;
+  const pct=fin>0?Math.min(rec/fin*100,100):0;
+
+  document.getElementById('cvBody').innerHTML=`
+    <div class="cdv-pay-bar">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="font-size:11px;font-weight:700;color:var(--text2)">Payment Status</span>
+        <span style="font-size:11px;color:var(--text3)">${Math.round(pct)}% paid</span>
+      </div>
+      <div style="height:7px;background:var(--surface3);border-radius:4px;overflow:hidden;margin-bottom:8px">
+        <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--solar),var(--green));border-radius:4px;transition:width .5s"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center">
+        <div><div style="font-size:10px;color:var(--text3);font-weight:700;margin-bottom:2px">FINAL AMT</div><div style="font-size:15px;font-weight:800;color:var(--text)">${fmt(cust.final_amount)}</div></div>
+        <div><div style="font-size:10px;color:var(--text3);font-weight:700;margin-bottom:2px">RECEIVED</div><div style="font-size:15px;font-weight:800;color:var(--green)">${fmt(rec)||'₹0'}</div></div>
+        <div><div style="font-size:10px;color:var(--text3);font-weight:700;margin-bottom:2px">BALANCE</div><div style="font-size:15px;font-weight:800;color:${bal>0?'var(--red)':bal<0?'var(--amber)':'var(--green)'}">${bal===0?'✓ Clear':bal<0?'Refund '+fmt(Math.abs(bal)):fmt(bal)}</div></div>
+      </div>
+    </div>
+    <div class="cdv-grid">
+      <div class="cdv-sec">📋 Order Information</div>
+      <div class="cdv-item"><div class="cdv-lbl">Order ID</div>${cust.order_id&&!cust.order_id.startsWith('TMP-')?`<span class="cdv-val oid">${cust.order_id}</span>`:'<span class="cdv-val empty">Not assigned yet</span>'}</div>
+      <div class="cdv-item"><div class="cdv-lbl">FVR ID</div><span class="cdv-val fvr">${cust.fvr_id||'—'}</span></div>
+      <div class="cdv-item"><div class="cdv-lbl">Order Date</div>${val(fmtDate(cust.order_date))}</div>
+      <div class="cdv-sec">👤 Customer Details</div>
+      <div class="cdv-item"><div class="cdv-lbl">Name (Documents)</div>${val(cust.name_docs)}</div>
+      <div class="cdv-item"><div class="cdv-lbl">Loan Person</div>${val(cust.loan_person)}</div>
+      <div class="cdv-item"><div class="cdv-lbl">Mobile</div>${val(cust.mobile)}</div>
+      <div class="cdv-item full"><div class="cdv-lbl">Address</div>${val(cust.address)}</div>
+      <div class="cdv-item"><div class="cdv-lbl">Email</div>${val(cust.email)}</div>
+      <div class="cdv-item"><div class="cdv-lbl">CA Number</div>${val(cust.ca_number)}</div>
+      <div class="cdv-item"><div class="cdv-lbl">Sub Division</div>${val(cust.sub_division)}</div>
+      <div class="cdv-sec">☀️ Solar & Seller</div>
+      <div class="cdv-item"><div class="cdv-lbl">Seller Name</div>${val(cust.seller_name)}</div>
+      <div class="cdv-item"><div class="cdv-lbl">Solar Type</div>${val(cust.solar_type)}</div>
+      <div class="cdv-item"><div class="cdv-lbl">Capacity</div>${cust.capacity?`<span class="cdv-val cap-tag">${cust.capacity} kW</span>`:'<span class="cdv-val empty">—</span>'}</div>
+      <div class="cdv-sec">💰 Financial</div>
+      <div class="cdv-item"><div class="cdv-lbl">Final Amount</div><span class="cdv-val" style="color:var(--text)">${fmt(cust.final_amount)||'—'}</span></div>
+      <div class="cdv-item"><div class="cdv-lbl">Advance Amount</div><span class="cdv-val" style="color:var(--text)">${fmt(cust.advance_amount)||'—'}</span></div>
+      <div class="cdv-item"><div class="cdv-lbl">Customer Type</div>${val(cust.customer_type)}</div>
+      <div class="cdv-item"><div class="cdv-lbl">Work Status</div>${cust.work_status?`<span class="badge ${({Active:'b-active',Completed:'b-complete','On Hold':'b-pend2',Cancelled:'b-blocked'}[cust.work_status]||'b-na')}">${cust.work_status}</span>`:'<span class="cdv-val empty">—</span>'}</div>
+      <div class="cdv-item col2"><div class="cdv-lbl">Documents</div>${cust.documents&&cust.documents.startsWith('http')?`<a href="${cust.documents}" target="_blank" style="color:var(--solar);font-weight:600;text-decoration:none">🔗 Open Document</a>`:(cust.documents?`<span class="cdv-val">${esc(cust.documents)}</span>`:'<span class="cdv-val empty">—</span>')}</div>
+      ${cust.remarks?`<div class="cdv-item full"><div class="cdv-lbl">Remarks</div><span class="cdv-val">${esc(cust.remarks)}</span></div>`:''}
+    </div>`;
+  openModal('custViewModal');
+}
+
+function editFromView(){
+  closeModal('custViewModal');
+  openEdit(custViewId);
+}
+function trackFromView(){
+  closeModal('custViewModal');
+  openTrkModal(custViewId);
+}
+
+// ═══════════════════════════════════════
+// SELLER MANAGEMENT
+// ═══════════════════════════════════════
+function saveSellers(){localStorage.setItem('kcrm_sellers',JSON.stringify(sellers));}
+
+function populateSellerDropdown(currentVal){
+  const sel=document.getElementById('f_seller_name');
+  if(!sel)return;
+  sel.innerHTML='<option value="">— Select Seller —</option>'+
+    sellers.map(s=>`<option value="${esc(s)}"${s===currentVal?' selected':''}>${esc(s)}</option>`).join('');
+  // If editing and current val not in list, add it
+  if(currentVal&&!sellers.includes(currentVal)){
+    sel.innerHTML+=`<option value="${esc(currentVal)}" selected>${esc(currentVal)} (not in list)</option>`;
+  }
+}
+
+function openSellerMgr(){
+  renderSellerList();
+  openModal('sellerMgrModal');
+}
+
+function renderSellerList(){
+  const el=document.getElementById('sellerList');
+  if(!el)return;
+  if(!sellers.length){el.innerHTML='<div style="color:var(--text3);font-size:11px;text-align:center;padding:14px">No sellers added yet</div>';return;}
+  el.innerHTML=sellers.map((s,i)=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 11px;background:var(--surface2);border:1px solid var(--border);border-radius:8px">
+      <span style="font-size:12px;font-weight:600;color:var(--text)">${esc(s)}</span>
+      <button class="btn btn-ghost btn-xs" onclick="removeSeller(${i})" style="color:var(--red);font-size:11px" title="Remove">✕</button>
+    </div>`).join('');
+}
+
+function addSeller(){
+  const inp=document.getElementById('newSellerInp');
+  const name=(inp?.value||'').trim();
+  if(!name){toast('Enter a seller name','error');return;}
+  if(sellers.includes(name)){toast('Seller already exists','error');return;}
+  sellers.push(name);
+  saveSellers();
+  inp.value='';
+  renderSellerList();
+  const cur=document.getElementById('f_seller_name')?.value||'';
+  populateSellerDropdown(cur);
+  toast('Seller added: '+name,'success');
+}
+
+function removeSeller(idx){
+  const name=sellers[idx];
+  if(!confirm('Remove seller "'+name+'"?'))return;
+  sellers.splice(idx,1);
+  saveSellers();
+  renderSellerList();
+  const cur=document.getElementById('f_seller_name')?.value||'';
+  populateSellerDropdown(cur===name?'':cur);
+  toast('Seller removed','info');
+}
+
+// INIT
+function integrityCheck(){
+  // Ensure cancelled customers are NOT in the active customers array
+  const cancelledFvrs=new Set(cancelledCustomers.map(c=>(c.fvr_id||'').toUpperCase()).filter(Boolean));
+  customers=customers.filter(c=>c.work_status!=='Cancelled'&&!cancelledFvrs.has((c.fvr_id||'').toUpperCase()));
+  // Deduplicate customers by FVR ID — keep first occurrence
+  const seenFvr=new Set();
+  customers=customers.filter(c=>{
+    const fvr=(c.fvr_id||'').trim().toUpperCase();
+    c.fvr_id=fvr; // normalize to uppercase in-place
+    if(!fvr)return true;
+    if(seenFvr.has(fvr))return false;
+    seenFvr.add(fvr);return true;
+  });
+  // Remove tracking records for customers that no longer exist
+  const validIds=new Set(customers.map(c=>custInternalId(c)));
+  Object.keys(tracking).forEach(k=>{if(!validIds.has(k))delete tracking[k];});
+  // Ensure every customer has a tracking record
+  customers.forEach(c=>{const id=custInternalId(c);if(!tracking[id])tracking[id]=defTrk(id);});
+  // Ensure bill tracking records have billno fields
+  Object.values(tracking).forEach(t=>{if(t.bill1_billno===undefined)t.bill1_billno='';if(t.bill2_billno===undefined)t.bill2_billno='';});
+  // Remove payments with no FVR ID or whose customer no longer exists
+  const validFvrs=new Set([...customers.map(c=>(c.fvr_id||'').toUpperCase()),...cancelledCustomers.map(c=>(c.fvr_id||'').toUpperCase())].filter(Boolean));
+  payments=payments.filter(p=>{
+    const pfvr=(p.fvr_id||'').trim().toUpperCase();
+    return pfvr!==''&&validFvrs.has(pfvr);
+  });
+  // Seed sellers list from existing customer data if sellers list is empty
+  if(!sellers.length){
+    const fromCustomers=[...new Set(customers.map(c=>c.seller_name).filter(Boolean))].sort();
+    if(fromCustomers.length){sellers=fromCustomers;saveSellers();}
+  }
+}
+loadLocal();integrityCheck();
+if(sheetsUrl){
+  updateSheetsUI(true);
+  // Restore auto-sync preference
+  const autoOn=localStorage.getItem('kcrm_autosync')==='1';
+  const chk=document.getElementById('autoSyncChk');
+  if(chk)chk.checked=autoOn;
+  if(autoOn)startAutoSync();
+}
+populateDashFilters();renderDash();renderCustTable();renderTrackTable();renderPayTable();
+
+
+</script>
+</body>
+</html>
