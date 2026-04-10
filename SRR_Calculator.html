@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>SRR Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#F4F6FA;--surface:#FFF;--surface2:#F0F2F7;--surface3:#E8EBF2;
+  --border:#E2E6EE;--border2:#CDD2DE;
+  --text:#0F1623;--text2:#4B5670;--text3:#8F98B0;
+  --accent:#1B6FEB;--accent-bg:#EBF2FF;--accent-dark:#1458C4;
+  --green:#059669;--green-bg:#ECFDF5;--green-dark:#047857;
+  --amber:#D97706;--amber-bg:#FFFBEB;
+  --red:#DC2626;--red-bg:#FEF2F2;
+  --purple:#7C3AED;--purple-bg:#F5F3FF;
+  --ongrid:#1B6FEB;--ongrid-bg:#EBF2FF;
+  --hybrid:#7C3AED;--hybrid-bg:#F5F3FF;
+  --radius:10px;--radius-lg:14px;--radius-xl:18px;
+  --sh:0 1px 4px rgba(0,0,0,0.07);--sh-md:0 4px 16px rgba(0,0,0,0.09);
+}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden;font-size:14px}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 14px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:200;box-shadow:var(--sh)}
+.brand{display:flex;align-items:center;gap:9px}
+.brand-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#1B6FEB,#7C3AED);flex-shrink:0}
+.brand-name{font-size:15px;font-weight:700;letter-spacing:-0.02em}
+.brand-name em{font-style:normal;color:var(--accent)}
+.sync-pill{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:5px 11px;border-radius:20px;cursor:pointer;border:1.5px solid var(--border2);background:var(--surface2);color:var(--text3);transition:all .15s;white-space:nowrap;user-select:none}
+.sync-pill:hover{border-color:var(--accent);color:var(--accent)}
+.sync-pill.synced{border-color:var(--green);color:var(--green);background:var(--green-bg)}
+.sync-pill.syncing{border-color:var(--accent);color:var(--accent);background:var(--accent-bg);animation:pulse 1s infinite}
+.sync-pill.error{border-color:var(--red);color:var(--red);background:var(--red-bg)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+/* ── TYPE SWITCHER ── */
+.type-switcher{background:var(--surface);border-bottom:1px solid var(--border);padding:8px 14px;display:flex;align-items:center;gap:8px}
+.type-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;white-space:nowrap}
+.type-pills{display:flex;gap:6px;flex:1}
+.type-pill{flex:1;padding:7px 10px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:2px solid var(--border2);background:var(--surface2);color:var(--text2);text-align:center;transition:all .18s;user-select:none}
+.type-pill.ongrid.active{background:var(--ongrid-bg);border-color:var(--ongrid);color:var(--ongrid)}
+.type-pill.hybrid.active{background:var(--hybrid-bg);border-color:var(--hybrid);color:var(--hybrid)}
+
+/* ── BUTTON NAV ── */
+.nav{background:var(--surface);border-bottom:1px solid var(--border);padding:8px 14px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.nav::-webkit-scrollbar{display:none}
+.nav-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border2);background:var(--surface2);color:var(--text3);white-space:nowrap;transition:all .15s;user-select:none;flex-shrink:0}
+.nav-btn:hover{background:var(--surface3);color:var(--text2)}
+.nav-btn.active{background:var(--accent);color:#fff;border-color:transparent;box-shadow:0 2px 8px rgba(27,111,235,.25)}
+.nav-btn.active.adj{background:var(--purple);box-shadow:0 2px 8px rgba(124,58,237,.25)}
+.nav-icon{font-size:14px;line-height:1}
+
+/* ── PAGE ── */
+.page{display:none;padding:14px 14px 90px;max-width:720px;margin:0 auto}
+.page.active{display:block;animation:fadeUp .16s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ── SECTION LABEL ── */
+.slabel{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--text3);text-transform:uppercase;margin:16px 0 8px;display:flex;align-items:center;gap:8px}
+.slabel:first-child{margin-top:0}
+.slabel::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── CARD ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;box-shadow:var(--sh);margin-bottom:12px}
+
+/* ── GRIDS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.s2{grid-column:span 2}.s3{grid-column:span 3}
+@media(max-width:500px){.g3{grid-template-columns:1fr 1fr}.s3{grid-column:span 2}}
+@media(max-width:360px){.g2,.g3{grid-template-columns:1fr}.s2,.s3{grid-column:span 1}}
+
+/* ── FIELD ── */
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--text2);text-transform:uppercase;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.avail-tag{font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;letter-spacing:0;flex-shrink:0}
+.avail-tag.amber{background:var(--amber-bg);color:var(--amber);border:1px solid #FDE68A}
+.avail-tag.green{background:var(--green-bg);color:var(--green);border:1px solid #A7F3D0}
+.field-row{display:flex}
+.finput{flex:1;border-radius:var(--radius) 0 0 var(--radius)!important}
+.field input,.finput,.field select{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);padding:9px 11px;font-size:14px;font-weight:500;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;outline:none;transition:border .15s,box-shadow .15s;width:100%}
+.field input:focus,.finput:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(27,111,235,.1)}
+.field input::placeholder,.finput::placeholder{color:var(--text3);font-weight:400;font-size:13px}
+.field input.auto-ok{border-color:var(--green);background:var(--green-bg)}
+.field-hint{font-size:10px;line-height:1.4;margin-top:1px;color:var(--text3)}
+.field-hint.ok{color:var(--green)}.field-hint.warn{color:var(--amber)}.field-hint.err{color:var(--red)}
+
+/* ── TICK BTN ── */
+.tick-btn{width:38px;min-width:38px;background:var(--surface2);border:1.5px solid var(--border2);border-left:none;border-radius:0 var(--radius) var(--radius) 0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--text3);transition:all .15s}
+.tick-btn:hover:not(.unavailable){background:var(--accent-bg);border-color:var(--accent);color:var(--accent)}
+.tick-btn.applied{background:var(--green-bg);border-color:var(--green);color:var(--green)}
+.tick-btn.unavailable{opacity:.3;cursor:not-allowed}
+
+/* ── RESULT CARD ── */
+.result-card{border-radius:var(--radius-xl);padding:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0;box-shadow:var(--sh-md);transition:all .3s}
+.result-card.ongrid{background:linear-gradient(135deg,#EBF2FF,#F0F9FF);border:1.5px solid #BFDBFE}
+.result-card.hybrid{background:linear-gradient(135deg,#F5F3FF,#FDF4FF);border:1.5px solid #DDD6FE}
+.rl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.result-card.ongrid .rl{color:var(--ongrid)}.result-card.hybrid .rl{color:var(--hybrid)}
+.result-amt{font-size:34px;font-weight:700;font-family:'DM Mono',monospace;letter-spacing:-.03em;transition:color .2s}
+.result-amt.pos{color:var(--green)}.result-amt.neg{color:var(--red)}.result-amt.zero{color:var(--text2)}
+.result-formula{font-size:9px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace}
+.result-rhs{display:flex;flex-direction:column;gap:6px;align-items:flex-end;flex-shrink:0}
+.mbadge{background:rgba(255,255,255,.85);border:1px solid var(--border2);border-radius:8px;padding:5px 9px;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;text-align:right;min-width:100px}
+.mbadge-label{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:1px;font-family:'Plus Jakarta Sans',sans-serif}
+.mbadge-val.ongrid{color:var(--ongrid)}.mbadge-val.hybrid{color:var(--hybrid)}
+
+/* ── METRICS ── */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+@media(max-width:500px){.metrics{grid-template-columns:1fr 1fr}}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px;box-shadow:var(--sh)}
+.metric-label{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+.metric-value{font-size:14px;font-weight:700;font-family:'DM Mono',monospace;color:var(--text)}
+
+/* ── BUTTONS ── */
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{padding:10px 16px;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--border2);background:var(--surface);color:var(--text2);transition:all .15s;font-family:'Plus Jakarta Sans',sans-serif;touch-action:manipulation}
+.btn:active{transform:scale(.97)}.btn:hover{background:var(--surface2)}
+.btn.primary{background:var(--accent);color:#fff;border-color:transparent;box-shadow:0 2px 8px rgba(27,111,235,.28)}
+.btn.primary:hover{background:var(--accent-dark)}
+.btn.primary.hm{background:var(--hybrid);box-shadow:0 2px 8px rgba(124,58,237,.28)}
+.btn.primary.hm:hover{background:#6D28D9}
+.btn.ghost{background:transparent;border-color:var(--accent);color:var(--accent)}.btn.ghost:hover{background:var(--accent-bg)}
+.btn.danger{border-color:var(--red);color:var(--red)}.btn.danger:hover{background:var(--red-bg)}
+.btn.purple{background:var(--purple);color:#fff;border-color:transparent;box-shadow:0 2px 8px rgba(124,58,237,.28)}
+.btn.purple:hover{background:#6D28D9}
+
+/* ── STATUS ── */
+.status{font-size:11px;margin-top:8px;min-height:16px;font-family:'DM Mono',monospace;text-align:center}
+.status.ok{color:var(--green)}.status.err{color:var(--red)}.status.info{color:var(--accent)}
+
+/* ── SEARCH ── */
+.search-wrap{position:relative;margin-bottom:10px}
+.search-wrap input{width:100%;background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);padding:10px 14px 10px 38px;font-size:14px;color:var(--text);outline:none;font-family:'Plus Jakarta Sans',sans-serif;transition:border .15s}
+.search-wrap input:focus{border-color:var(--accent)}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;font-size:14px}
+.filter-row{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.filter-chip{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid var(--border2);background:var(--surface);color:var(--text3);transition:all .15s}
+.filter-chip.active{background:var(--accent-bg);border-color:var(--accent);color:var(--accent)}
+.filter-chip.h-active{background:var(--hybrid-bg);border-color:var(--hybrid);color:var(--hybrid)}
+
+/* ── HISTORY TABLE ── */
+.htable-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--radius-lg);border:1px solid var(--border);box-shadow:var(--sh)}
+.htable{width:100%;border-collapse:collapse;font-size:12px;background:var(--surface);min-width:520px}
+.htable th{padding:8px 10px;font-size:9px;letter-spacing:.08em;color:var(--text3);text-transform:uppercase;font-weight:700;background:var(--surface2);border-bottom:1px solid var(--border);white-space:nowrap}
+.htable td{padding:9px 10px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle}
+.htable tr:last-child td{border-bottom:none}.htable tr:hover td{background:var(--surface2)}
+.fvr-tag{font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);background:var(--accent-bg);padding:2px 6px;border-radius:4px}
+.type-dot{display:inline-flex;align-items:center;font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px}
+.type-dot.ongrid{background:var(--ongrid-bg);color:var(--ongrid)}.type-dot.hybrid{background:var(--hybrid-bg);color:var(--hybrid)}
+.srr-pos{font-family:'DM Mono',monospace;font-weight:700;color:var(--green)}
+.srr-neg{font-family:'DM Mono',monospace;font-weight:700;color:var(--red)}
+.no-data{text-align:center;padding:40px;color:var(--text3);font-size:13px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg)}
+
+/* ── ADJUSTMENT ── */
+.adj-hero{background:linear-gradient(135deg,var(--purple-bg),#EDE9FE);border:1.5px solid #DDD6FE;border-radius:var(--radius-xl);padding:16px;margin-bottom:14px;box-shadow:var(--sh-md)}
+.adj-hero-title{font-size:11px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.adj-hero-sub{font-size:12px;color:var(--text2);line-height:1.5}
+.adj-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+.adj-metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;box-shadow:var(--sh);text-align:center}
+.adj-metric-label{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.adj-metric-val{font-size:16px;font-weight:700;font-family:'DM Mono',monospace}
+.adj-metric-val.neg{color:var(--red)}.adj-metric-val.pos{color:var(--green)}.adj-metric-val.zero{color:var(--text2)}
+.suggestion-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;margin-bottom:10px;box-shadow:var(--sh);position:relative;overflow:hidden}
+.suggestion-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px}
+.suggestion-card.full::before{background:var(--green)}
+.suggestion-card.partial::before{background:var(--amber)}
+.suggestion-card.multi::before{background:var(--accent)}
+.sug-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
+.sug-title{font-size:13px;font-weight:700;color:var(--text);line-height:1.3}
+.sug-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.sug-badge.full{background:var(--green-bg);color:var(--green)}
+.sug-badge.partial{background:var(--amber-bg);color:var(--amber)}
+.sug-badge.multi{background:var(--accent-bg);color:var(--accent)}
+.sug-detail{font-size:12px;color:var(--text2);line-height:1.6}
+.sug-detail strong{color:var(--text);font-weight:600}
+.sug-after{font-size:11px;font-family:'DM Mono',monospace;margin-top:6px;padding:6px 10px;background:var(--surface2);border-radius:6px;color:var(--text2)}
+.sug-after span.pos{color:var(--green);font-weight:600}
+.sug-after span.neg{color:var(--red);font-weight:600}
+.adj-entries-list{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.adj-entry-row{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;cursor:pointer;transition:all .15s;user-select:none}
+.adj-entry-row:hover{border-color:var(--border2);background:var(--surface2)}
+.adj-entry-row.selected-minus{border-color:var(--red);background:var(--red-bg)}
+.adj-entry-row.selected-plus{border-color:var(--green);background:var(--green-bg)}
+.adj-entry-name{font-weight:600;font-size:13px;color:var(--text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.adj-entry-fvr{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)}
+.adj-entry-srr{font-family:'DM Mono',monospace;font-size:13px;font-weight:700}
+.adj-entry-srr.pos{color:var(--green)}.adj-entry-srr.neg{color:var(--red)}
+.adj-select-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;padding:4px 8px;background:var(--surface2);border-radius:4px;flex-shrink:0}
+.no-suggestions{text-align:center;padding:32px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg)}
+.no-suggestions-icon{font-size:32px;margin-bottom:8px}
+.no-suggestions p{font-size:13px;color:var(--text3);line-height:1.6}
+
+/* ── SETTINGS ── */
+.scard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-bottom:12px;box-shadow:var(--sh)}
+.scard-header{display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap}
+.scard-title{font-size:13px;font-weight:700;color:var(--text)}
+.badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;border:1px solid}
+.badge.both{background:var(--surface2);color:var(--text2);border-color:var(--border2)}
+.badge.shared{background:var(--green-bg);color:var(--green);border-color:#A7F3D0}
+.scard-desc{font-size:11px;color:var(--text2);margin-bottom:12px;line-height:1.6}
+.stabs{display:flex;gap:4px;margin-bottom:12px}
+.stab-btn{flex:1;padding:7px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border2);background:var(--surface2);color:var(--text3);text-align:center;transition:all .15s}
+.stab-btn.ongrid.active{background:var(--ongrid-bg);border-color:var(--ongrid);color:var(--ongrid)}
+.stab-btn.hybrid.active{background:var(--hybrid-bg);border-color:var(--hybrid);color:var(--hybrid)}
+.stab-pane{display:none}.stab-pane.active{display:block}
+.rtable{width:100%;border-collapse:collapse}
+.rtable th{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;padding:5px 7px;border-bottom:1px solid var(--border);text-align:left;font-weight:700}
+.rtable td{padding:5px 7px;border-bottom:1px solid var(--border)}
+.rtable td:last-child{width:32px}
+.rtable input{background:var(--surface2);border:1.5px solid var(--border);border-radius:6px;padding:5px 8px;font-size:12px;color:var(--text);width:100%;outline:none;font-family:'DM Mono',monospace;transition:border .15s}
+.rtable input:focus{border-color:var(--accent)}
+.add-btn{font-size:11px;font-weight:600;color:var(--accent);cursor:pointer;padding:8px 0 0;display:inline-flex;align-items:center;gap:3px}
+.add-btn:hover{color:var(--accent-dark)}
+.del-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:3px 6px;border-radius:4px}
+.del-btn:hover{color:var(--red);background:var(--red-bg)}
+.setup-banner{background:var(--amber-bg);border:1.5px solid #FDE68A;border-radius:var(--radius-lg);padding:14px;margin-bottom:12px}
+.setup-banner-title{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:5px}
+.setup-banner p{font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:10px}
+.gs-row{display:flex;gap:8px}
+.gs-row input{flex:1;background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);padding:9px 12px;font-size:12px;color:var(--text);outline:none;font-family:'DM Mono',monospace;transition:border .15s;min-width:0}
+.gs-row input:focus{border-color:var(--accent)}
+.info-banner{background:var(--accent-bg);border:1px solid #BFDBFE;border-radius:var(--radius);padding:10px 12px;font-size:11px;color:var(--accent);display:flex;align-items:flex-start;gap:8px;margin-bottom:12px;line-height:1.5}
+.code-block{background:var(--surface2);border-radius:8px;padding:10px 12px;font-size:10px;color:var(--text2);line-height:1.9;font-family:'DM Mono',monospace;margin-top:10px;border:1px solid var(--border);overflow-x:auto;white-space:pre}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .page{padding-bottom:100px}
+  .result-amt{font-size:26px}
+  .result-card{flex-direction:column;align-items:flex-start;gap:10px}
+  .result-rhs{flex-direction:row;flex-wrap:wrap}
+  .mbadge{min-width:auto}
+  .adj-summary{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-icon">☀</div>
+    <div class="brand-name">SRR <em>Calculator</em></div>
+  </div>
+  <div class="sync-pill" id="sync-pill" onclick="syncRates()">
+    <div class="sync-dot"></div>
+    <span id="sync-label">Sync Rates</span>
+  </div>
+</div>
+
+<!-- TYPE SWITCHER -->
+<div class="type-switcher">
+  <span class="type-label">Plant Type</span>
+  <div class="type-pills">
+    <div class="type-pill ongrid active" onclick="setType('ongrid')">☀ On Grid</div>
+    <div class="type-pill hybrid" onclick="setType('hybrid')">⚡ Hybrid</div>
+  </div>
+</div>
+
+<!-- BUTTON NAV -->
+<div class="nav">
+  <div class="nav-btn active" id="nav-calc" onclick="showTab('calc')"><span class="nav-icon">✚</span>New Entry</div>
+  <div class="nav-btn" id="nav-history" onclick="showTab('history')"><span class="nav-icon">◷</span>History</div>
+  <div class="nav-btn adj" id="nav-adjust" onclick="showTab('adjust')"><span class="nav-icon">⇄</span>Adjustment</div>
+  <div class="nav-btn" id="nav-settings" onclick="showTab('settings')"><span class="nav-icon">⚙</span>Settings</div>
+</div>
+
+<!-- ════════════ NEW ENTRY ════════════ -->
+<div class="page active" id="page-calc">
+  <div class="slabel">Customer Details</div>
+  <div class="card">
+    <div class="g3">
+      <div class="field s2"><label>Customer Name</label><input type="text" id="f-name" placeholder="Full name" autocomplete="name"/></div>
+      <div class="field"><label>Mobile No.</label><input type="tel" id="f-mobile" placeholder="10-digit" maxlength="10" inputmode="numeric"/></div>
+      <div class="field"><label>FVR ID</label><input type="text" id="f-fvr" placeholder="Enter FVR ID" style="font-family:'DM Mono',monospace" oninput="updateFvrDisplay()"/></div>
+      <div class="field"><label>Capacity (kW)</label><input type="number" id="f-kw" placeholder="e.g. 2.95" step="0.01" inputmode="decimal" oninput="onKwChange()"/></div>
+      <div class="field">
+        <label>Sanction Load (kW) <span style="font-size:9px;font-weight:400;color:var(--text3);text-transform:none;letter-spacing:0">→ NC &amp; Sanction fees</span></label>
+        <input type="number" id="f-sankw" placeholder="e.g. 3" step="0.01" inputmode="decimal" oninput="onSankwChange()"/>
+        <div class="field-hint" id="sankw-hint"></div>
+      </div>
+      <div class="field"><label>Date</label><input type="date" id="f-date"/></div>
+    </div>
+  </div>
+
+  <div class="slabel">Financial Details</div>
+  <div class="card">
+    <div class="g3">
+      <div class="field"><label>Final Amount (₹)</label><input type="number" id="f-final" placeholder="0" inputmode="numeric" oninput="calc()"/></div>
+      <div class="field">
+        <label>Actual Amount (₹)</label>
+        <input type="number" id="f-actual" placeholder="Auto from kW" inputmode="numeric" oninput="calc()"/>
+        <div class="field-hint" id="actual-hint"></div>
+      </div>
+      <div class="field"><label>Stamp Duty (₹)</label><input type="number" id="f-stamp" placeholder="0" inputmode="numeric" oninput="calc()"/></div>
+      <div class="field"><label>Processing Fees (₹)</label><input type="number" id="f-proc" placeholder="0" inputmode="numeric" oninput="calc()"/></div>
+      <div class="field">
+        <label>Name Change Fee (₹) <span class="avail-tag amber" id="nc-avail" style="display:none"></span></label>
+        <div class="field-row">
+          <input class="finput" type="number" id="f-ncfee" placeholder="0" inputmode="numeric" oninput="calc()"/>
+          <button class="tick-btn unavailable" id="tick-nc" onclick="applyTick('nc')">✓</button>
+        </div>
+        <div class="field-hint" id="nc-hint"></div>
+      </div>
+      <div class="field">
+        <label>Sanction Load Fees (₹) <span class="avail-tag amber" id="sl-avail" style="display:none"></span></label>
+        <div class="field-row">
+          <input class="finput" type="number" id="f-sanction" placeholder="0" inputmode="numeric" oninput="calc()"/>
+          <button class="tick-btn unavailable" id="tick-sl" onclick="applyTick('sl')">✓</button>
+        </div>
+        <div class="field-hint" id="sl-hint"></div>
+      </div>
+      <div class="field">
+        <label>Other Expenses (₹) <span class="avail-tag amber" id="oe-avail" style="display:none"></span></label>
+        <div class="field-row">
+          <input class="finput" type="number" id="f-other" placeholder="0" inputmode="numeric" oninput="calc()"/>
+          <button class="tick-btn unavailable" id="tick-oe" onclick="applyTick('oe')">✓</button>
+        </div>
+        <div class="field-hint" id="oe-hint"></div>
+      </div>
+      <div class="field">
+        <label>Discount (₹) <span class="avail-tag green" id="disc-avail" style="display:none"></span></label>
+        <div class="field-row">
+          <input class="finput" type="number" id="f-discount" placeholder="0" inputmode="numeric" oninput="calc()"/>
+          <button class="tick-btn unavailable" id="tick-disc" onclick="applyTick('disc')">✓</button>
+        </div>
+        <div class="field-hint" id="disc-hint"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="result-card ongrid" id="result-card">
+    <div>
+      <div class="rl">SRR Incentive</div>
+      <div class="result-amt zero" id="srr-result">₹ 0</div>
+      <div class="result-formula">Final − Actual − NC − Sanction − Stamp − Proc − Other − Discount</div>
+    </div>
+    <div class="result-rhs">
+      <div class="mbadge"><div class="mbadge-label">FVR ID</div><div class="mbadge-val ongrid" id="fvr-display">—</div></div>
+      <div class="mbadge"><div class="mbadge-label">Type / kW</div><div class="mbadge-val ongrid" id="typekw-display">On Grid / —</div></div>
+    </div>
+  </div>
+
+  <div class="metrics">
+    <div class="metric"><div class="metric-label">Final</div><div class="metric-value" id="m-final">₹0</div></div>
+    <div class="metric"><div class="metric-label">Actual</div><div class="metric-value" id="m-actual">₹0</div></div>
+    <div class="metric"><div class="metric-label">Fees</div><div class="metric-value" id="m-fees">₹0</div></div>
+    <div class="metric"><div class="metric-label">Discount</div><div class="metric-value" id="m-discount">₹0</div></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn danger" onclick="resetForm()">Reset</button>
+    <button class="btn ghost" onclick="copyEntry()">Copy</button>
+    <button class="btn primary" id="save-btn" onclick="saveEntry()" style="flex:2">Save → Sheets</button>
+  </div>
+  <div class="status" id="calc-status"></div>
+</div>
+
+<!-- ════════════ HISTORY ════════════ -->
+<div class="page" id="page-history">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Name, FVR ID, mobile…" oninput="renderHistory()"/>
+  </div>
+  <div class="filter-row">
+    <div class="filter-chip active" id="fchip-all" onclick="setFilter('all')">All</div>
+    <div class="filter-chip" id="fchip-ongrid" onclick="setFilter('ongrid')">☀ On Grid</div>
+    <div class="filter-chip" id="fchip-hybrid" onclick="setFilter('hybrid')">⚡ Hybrid</div>
+  </div>
+  <div id="history-container"></div>
+</div>
+
+<!-- ════════════ ADJUSTMENT ════════════ -->
+<div class="page" id="page-adjust">
+
+  <div class="adj-hero">
+    <div class="adj-hero-title">⇄ SRR Incentive Adjustment</div>
+    <div class="adj-hero-sub">Automatically finds how minus (negative) SRR incentives can be offset by surplus (positive) ones. Select entries below, then tap <b>Generate Suggestions</b>.</div>
+  </div>
+
+  <div class="adj-summary" id="adj-summary">
+    <div class="adj-metric"><div class="adj-metric-label">Total Entries</div><div class="adj-metric-val zero" id="adj-total">0</div></div>
+    <div class="adj-metric"><div class="adj-metric-label">Total Minus</div><div class="adj-metric-val neg" id="adj-minus">₹0</div></div>
+    <div class="adj-metric"><div class="adj-metric-label">Total Surplus</div><div class="adj-metric-val pos" id="adj-plus">₹0</div></div>
+  </div>
+
+  <div class="slabel">Select Entries to Adjust</div>
+  <div class="filter-row">
+    <div class="filter-chip active" id="adj-chip-all" onclick="setAdjFilter('all')">All</div>
+    <div class="filter-chip" id="adj-chip-neg" onclick="setAdjFilter('neg')">Minus only</div>
+    <div class="filter-chip" id="adj-chip-pos" onclick="setAdjFilter('pos')">Surplus only</div>
+  </div>
+  <div id="adj-entries-list"></div>
+
+  <div class="btn-row" style="margin-bottom:14px">
+    <button class="btn" onclick="selectAllAdj()">Select All</button>
+    <button class="btn" onclick="clearAdjSelection()">Clear</button>
+    <button class="btn purple" onclick="generateSuggestions()" style="flex:2">⇄ Generate Suggestions</button>
+  </div>
+
+  <div id="adj-suggestions"></div>
+</div>
+
+<!-- ════════════ SETTINGS ════════════ -->
+<div class="page" id="page-settings">
+  <div class="setup-banner" id="setup-banner">
+    <div class="setup-banner-title">⚠ One-time Setup Required</div>
+    <p>Connect Google Sheets once — all team members on any device automatically share the same rates.</p>
+    <div class="gs-row">
+      <input type="url" id="gs-url" placeholder="https://script.google.com/macros/s/.../exec"/>
+      <button class="btn primary" onclick="saveGsUrl()">Connect</button>
+    </div>
+    <div class="status" id="gs-status"></div>
+  </div>
+  <div class="info-banner" id="shared-info" style="display:none">
+    ☁ <span>Rates stored in Google Sheets — shared across all devices. Tap <b>Sync Rates</b> at top to reload on any device.</span>
+  </div>
+
+  <!-- kW Rates -->
+  <div class="scard">
+    <div class="scard-header"><div class="scard-title">kW → Actual Amount & Discount</div><span class="badge both">Per kW · Per Type</span><span class="badge shared">☁ Shared</span></div>
+    <div class="scard-desc">Exact plant capacity kW → actual amount + discount, separate for On Grid and Hybrid.</div>
+    <div class="stabs">
+      <div class="stab-btn ongrid active" id="kw-stab-ongrid" onclick="switchStab('kw','ongrid')">☀ On Grid</div>
+      <div class="stab-btn hybrid" id="kw-stab-hybrid" onclick="switchStab('kw','hybrid')">⚡ Hybrid</div>
+    </div>
+    <div class="stab-pane active" id="kw-pane-ongrid">
+      <table class="rtable"><thead><tr><th>kW</th><th>Actual Amount (₹)</th><th>Discount (₹)</th><th></th></tr></thead><tbody id="kw-ongrid-tbody"></tbody></table>
+      <div class="add-btn" onclick="addKwRow('ongrid')">+ Add Rate</div>
+    </div>
+    <div class="stab-pane" id="kw-pane-hybrid">
+      <table class="rtable"><thead><tr><th>kW</th><th>Actual Amount (₹)</th><th>Discount (₹)</th><th></th></tr></thead><tbody id="kw-hybrid-tbody"></tbody></table>
+      <div class="add-btn" onclick="addKwRow('hybrid')">+ Add Rate</div>
+    </div>
+    <button class="btn primary" style="margin-top:10px" onclick="saveSection('kw')">Save & Sync kW Rates</button>
+    <div class="status" id="kw-status"></div>
+  </div>
+
+  <!-- NC Fee -->
+  <div class="scard">
+    <div class="scard-header"><div class="scard-title">Name Change Fee</div><span class="badge both">Per Sanction Load kW · Per Type</span><span class="badge shared">☁ Shared</span></div>
+    <div class="scard-desc">Fixed fee based on <b>Sanction Load kW</b> entered in New Entry. E.g. Sanction Load 3 kW = ₹50.</div>
+    <div class="stabs">
+      <div class="stab-btn ongrid active" id="nc-stab-ongrid" onclick="switchStab('nc','ongrid')">☀ On Grid</div>
+      <div class="stab-btn hybrid" id="nc-stab-hybrid" onclick="switchStab('nc','hybrid')">⚡ Hybrid</div>
+    </div>
+    <div class="stab-pane active" id="nc-pane-ongrid">
+      <table class="rtable"><thead><tr><th>Sanction Load kW</th><th>Fee (₹)</th><th></th></tr></thead><tbody id="nc-ongrid-tbody"></tbody></table>
+      <div class="add-btn" onclick="addFixed('nc','ongrid')">+ Add</div>
+    </div>
+    <div class="stab-pane" id="nc-pane-hybrid">
+      <table class="rtable"><thead><tr><th>Sanction Load kW</th><th>Fee (₹)</th><th></th></tr></thead><tbody id="nc-hybrid-tbody"></tbody></table>
+      <div class="add-btn" onclick="addFixed('nc','hybrid')">+ Add</div>
+    </div>
+    <button class="btn primary" style="margin-top:10px" onclick="saveSection('nc')">Save & Sync NC Fees</button>
+    <div class="status" id="nc-status"></div>
+  </div>
+
+  <!-- Sanction Load -->
+  <div class="scard">
+    <div class="scard-header"><div class="scard-title">Sanction Load Fees</div><span class="badge both">Sanction Load kW Range · Per Type</span><span class="badge shared">☁ Shared</span></div>
+    <div class="scard-desc">Range-based fee on <b>Sanction Load kW</b>. E.g. On Grid 1–3 kW = ₹1000, 3–5 kW = ₹1500.</div>
+    <div class="stabs">
+      <div class="stab-btn ongrid active" id="sl-stab-ongrid" onclick="switchStab('sl','ongrid')">☀ On Grid</div>
+      <div class="stab-btn hybrid" id="sl-stab-hybrid" onclick="switchStab('sl','hybrid')">⚡ Hybrid</div>
+    </div>
+    <div class="stab-pane active" id="sl-pane-ongrid">
+      <table class="rtable"><thead><tr><th>Min kW (≥)</th><th>Max kW (&lt;)</th><th>Fee (₹)</th><th></th></tr></thead><tbody id="sl-ongrid-tbody"></tbody></table>
+      <div class="add-btn" onclick="addRange('sl','ongrid')">+ Add Range</div>
+    </div>
+    <div class="stab-pane" id="sl-pane-hybrid">
+      <table class="rtable"><thead><tr><th>Min kW (≥)</th><th>Max kW (&lt;)</th><th>Fee (₹)</th><th></th></tr></thead><tbody id="sl-hybrid-tbody"></tbody></table>
+      <div class="add-btn" onclick="addRange('sl','hybrid')">+ Add Range</div>
+    </div>
+    <button class="btn primary" style="margin-top:10px" onclick="saveSection('sl')">Save & Sync Sanction Rules</button>
+    <div class="status" id="sl-status"></div>
+  </div>
+
+  <!-- Other Exp -->
+  <div class="scard">
+    <div class="scard-header"><div class="scard-title">Other Expenses</div><span class="badge both">Fixed per Capacity kW · Per Type</span><span class="badge shared">☁ Shared</span></div>
+    <div class="scard-desc">Fixed other expenses for each exact plant capacity kW. E.g. 2.95 kW = ₹500.</div>
+    <div class="stabs">
+      <div class="stab-btn ongrid active" id="oe-stab-ongrid" onclick="switchStab('oe','ongrid')">☀ On Grid</div>
+      <div class="stab-btn hybrid" id="oe-stab-hybrid" onclick="switchStab('oe','hybrid')">⚡ Hybrid</div>
+    </div>
+    <div class="stab-pane active" id="oe-pane-ongrid">
+      <table class="rtable"><thead><tr><th>Capacity kW</th><th>Amount (₹)</th><th></th></tr></thead><tbody id="oe-ongrid-tbody"></tbody></table>
+      <div class="add-btn" onclick="addFixed('oe','ongrid')">+ Add</div>
+    </div>
+    <div class="stab-pane" id="oe-pane-hybrid">
+      <table class="rtable"><thead><tr><th>Capacity kW</th><th>Amount (₹)</th><th></th></tr></thead><tbody id="oe-hybrid-tbody"></tbody></table>
+      <div class="add-btn" onclick="addFixed('oe','hybrid')">+ Add</div>
+    </div>
+    <button class="btn primary" style="margin-top:10px" onclick="saveSection('oe')">Save & Sync Other Exp</button>
+    <div class="status" id="oe-status"></div>
+  </div>
+
+  <!-- Clear / Script -->
+  <div class="scard">
+    <div class="scard-title" style="margin-bottom:4px">Clear Local Entry History</div>
+    <div class="scard-desc" style="margin-bottom:10px">Clears entries on this device only. Google Sheets data and shared rates are unaffected.</div>
+    <button class="btn danger" onclick="clearLocalEntries()">Clear Entry History</button>
+    <div class="status" id="clear-status"></div>
+  </div>
+  <div class="scard">
+    <div class="scard-title" style="margin-bottom:4px">Google Apps Script Code</div>
+    <div class="scard-desc" style="margin-bottom:4px">Extensions → Apps Script → paste → Deploy as Web App (Anyone, Execute as Me).</div>
+    <div class="code-block">// SRR Calculator — Apps Script v2
+function doPost(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var d  = JSON.parse(e.postData.contents);
+
+  if (d.action === 'saveRates') {
+    var rs = ss.getSheetByName('Rates') || ss.insertSheet('Rates');
+    rs.clearContents();
+    rs.getRange(1,1).setValue(JSON.stringify(d.rates));
+    return ContentService.createTextOutput('ok')
+      .setMimeType(ContentService.MimeType.TEXT);
+  }
+  if (d.action === 'getRates') {
+    var rs = ss.getSheetByName('Rates');
+    if (!rs || rs.getLastRow()===0)
+      return ContentService.createTextOutput('{}')
+        .setMimeType(ContentService.MimeType.TEXT);
+    return ContentService.createTextOutput(rs.getRange(1,1).getValue())
+      .setMimeType(ContentService.MimeType.TEXT);
+  }
+  // Default: save entry
+  var es = ss.getSheetByName('Entries') || ss.insertSheet('Entries');
+  if (es.getLastRow()===0) {
+    es.appendRow(['Date','Type','FVR','Name','Mobile',
+      'Cap kW','SL kW','Final','Actual','NC Fee',
+      'Sanction','Stamp','Processing','Other Exp',
+      'Discount','SRR Incentive']);
+  }
+  es.appendRow([d.ts,d.type,d.fvr,d.name,d.mobile,
+    d.kw,d.sankw,d.finalAmt,d.actualAmt,d.ncfee,
+    d.sanction,d.stamp,d.proc,d.other,d.discount,d.srr]);
+  return ContentService.createTextOutput('ok')
+    .setMimeType(ContentService.MimeType.TEXT);
+}</div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════
+let currentType = 'ongrid';
+let histFilter  = 'all';
+let adjFilter   = 'all';
+let adjSelected = new Set(); // indices into entries array
+let gsUrl  = localStorage.getItem('srr_gsurl') || '';
+let entries = JSON.parse(localStorage.getItem('srr_entries') || '[]');
+let rates   = JSON.parse(localStorage.getItem('srr_rates_cache') || JSON.stringify({
+  kw:{ongrid:[],hybrid:[]}, nc:{ongrid:[],hybrid:[]},
+  sl:{ongrid:[],hybrid:[]}, oe:{ongrid:[],hybrid:[]}
+}));
+
+// ════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════
+function init() {
+  document.getElementById('gs-url').value = gsUrl;
+  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+  updateSetupUI();
+  renderAllTables();
+  renderHistory();
+  renderAdjEntries();
+  calc();
+  document.querySelectorAll('.page').forEach(p => {
+    p.style.display = p.classList.contains('active') ? 'block' : 'none';
+  });
+  if (gsUrl) syncRates(true);
+}
+
+function updateSetupUI() {
+  const has = !!gsUrl;
+  document.getElementById('setup-banner').style.display = has ? 'none' : 'block';
+  document.getElementById('shared-info').style.display  = has ? 'flex' : 'none';
+  setSyncPill(has ? 'idle' : 'nourl');
+}
+
+// ════════════════════════════════════════
+// SYNC
+// ════════════════════════════════════════
+function setSyncPill(state) {
+  const pill = document.getElementById('sync-pill');
+  const label = document.getElementById('sync-label');
+  pill.className = 'sync-pill';
+  if (state==='syncing')      { pill.classList.add('syncing'); label.textContent = 'Syncing…'; }
+  else if (state==='synced')  { pill.classList.add('synced');  label.textContent = '✓ Synced'; setTimeout(()=>setSyncPill('idle'),3000); }
+  else if (state==='error')   { pill.classList.add('error');   label.textContent = 'Sync Failed'; setTimeout(()=>setSyncPill('idle'),4000); }
+  else if (state==='nourl')   { label.textContent = 'Setup First'; }
+  else                        { label.textContent = '↻ Sync Rates'; }
+}
+
+async function syncRates(silent=false) {
+  if (!gsUrl) { if(!silent) alert('Enter Google Sheets URL in Settings first.'); return; }
+  setSyncPill('syncing');
+  try {
+    const res  = await fetch(gsUrl, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({action:'getRates'})
+    });
+    if (!res.ok) throw new Error('HTTP '+res.status);
+    const text = await res.text();
+    const data = JSON.parse(text || '{}');
+    if (data && data.kw) {
+      rates = data;
+      localStorage.setItem('srr_rates_cache', JSON.stringify(rates));
+      renderAllTables();
+      onKwChange();
+    }
+    setSyncPill('synced');
+  } catch(err) {
+    if (!silent) setSyncPill('error');
+    else setSyncPill('idle');
+  }
+}
+
+// ════════════════════════════════════════
+// SAVE SECTION TO SHEETS
+// ════════════════════════════════════════
+function readSectionFromDom(section) {
+  if (section === 'kw') {
+    ['ongrid','hybrid'].forEach(t => {
+      rates.kw[t] = [];
+      document.querySelectorAll(`#kw-${t}-tbody tr`).forEach(tr => {
+        const i = tr.querySelectorAll('input');
+        if (i.length>=3 && i[0].value) rates.kw[t].push({kw:i[0].value,actual:i[1].value,discount:i[2].value});
+      });
+    });
+  } else if (section==='nc' || section==='oe') {
+    ['ongrid','hybrid'].forEach(t => {
+      rates[section][t] = [];
+      document.querySelectorAll(`#${section}-${t}-tbody tr`).forEach(tr => {
+        const i = tr.querySelectorAll('input');
+        if (i.length>=2 && i[0].value) rates[section][t].push({kw:i[0].value,amount:i[1].value});
+      });
+    });
+  } else if (section==='sl') {
+    ['ongrid','hybrid'].forEach(t => {
+      rates.sl[t] = [];
+      document.querySelectorAll(`#sl-${t}-tbody tr`).forEach(tr => {
+        const i = tr.querySelectorAll('input');
+        if (i.length>=3 && i[0].value) rates.sl[t].push({min:i[0].value,max:i[1].value,amount:i[2].value});
+      });
+    });
+  }
+}
+
+async function saveSection(section) {
+  readSectionFromDom(section);
+  localStorage.setItem('srr_rates_cache', JSON.stringify(rates));
+  const statusId = section+'-status';
+  if (!gsUrl) { showSt(statusId,'✓ Saved locally (connect Sheets to share).','ok'); return; }
+  showSt(statusId,'Syncing to Google Sheets…','info');
+  try {
+    await fetch(gsUrl, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({action:'saveRates', rates})
+    });
+    showSt(statusId,'✓ Saved & synced — all devices get this on next sync.','ok');
+    setSyncPill('synced');
+  } catch(e) {
+    showSt(statusId,'✓ Saved locally. Sheets sync failed — check URL.','err');
+  }
+}
+
+// ════════════════════════════════════════
+// SHEETS URL
+// ════════════════════════════════════════
+function saveGsUrl() {
+  const url = document.getElementById('gs-url').value.trim();
+  if (!url) { showSt('gs-status','Enter a valid URL.','err'); return; }
+  gsUrl = url;
+  localStorage.setItem('srr_gsurl', gsUrl);
+  updateSetupUI();
+  showSt('gs-status','✓ Connected — syncing rates…','ok');
+  syncRates(true);
+}
+
+// ════════════════════════════════════════
+// TYPE
+// ════════════════════════════════════════
+function setType(t) {
+  currentType = t;
+  document.querySelectorAll('.type-pill').forEach(p=>p.classList.remove('active'));
+  document.querySelector('.type-pill.'+t).classList.add('active');
+  document.getElementById('result-card').className = 'result-card '+t;
+  ['fvr-display','typekw-display'].forEach(id=>{
+    document.getElementById(id).className = 'mbadge-val '+t;
+  });
+  document.getElementById('save-btn').className = 'btn primary'+(t==='hybrid'?' hm':'');
+  updateTypekwDisplay();
+  onKwChange();
+}
+function updateTypekwDisplay() {
+  const kw = document.getElementById('f-kw').value;
+  document.getElementById('typekw-display').textContent =
+    (currentType==='ongrid'?'On Grid':'Hybrid')+' / '+(kw||'—')+' kW';
+}
+
+// ════════════════════════════════════════
+// NAV / TABS
+// ════════════════════════════════════════
+function showTab(t) {
+  const tabs = ['calc','history','adjust','settings'];
+  tabs.forEach(n => {
+    const btn  = document.getElementById('nav-'+n);
+    const page = document.getElementById('page-'+n);
+    const on   = n === t;
+    if (btn)  { btn.classList.toggle('active', on); }
+    if (page) { page.classList.toggle('active', on); page.style.display = on ? 'block' : 'none'; }
+  });
+  if (t==='history')  renderHistory();
+  if (t==='settings') renderAllTables();
+  if (t==='adjust')   renderAdjEntries();
+}
+
+// ════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════
+const v   = id => parseFloat(document.getElementById(id).value) || 0;
+const fmt = n  => '₹' + Math.round(n).toLocaleString('en-IN');
+const matchKw = (section, type, kw) =>
+  (rates[section]?.[type]||[]).find(r=>Math.abs(parseFloat(r.kw)-kw)<0.0001) || null;
+const matchRange = (type, kw) =>
+  (rates.sl?.[type]||[]).find(r=>kw>=parseFloat(r.min||0)&&kw<parseFloat(r.max||999999)) || null;
+
+// ════════════════════════════════════════
+// kW CHANGE
+// ════════════════════════════════════════
+function onKwChange() {
+  const kw = parseFloat(document.getElementById('f-kw').value) || 0;
+  updateTypekwDisplay();
+  const kwM = matchKw('kw', currentType, kw);
+  const ai  = document.getElementById('f-actual');
+  const ah  = document.getElementById('actual-hint');
+  if (kwM && kwM.actual) {
+    ai.value = kwM.actual; ai.classList.add('auto-ok');
+    ah.textContent = '⚡ Auto: '+fmt(parseFloat(kwM.actual))+' ('+(currentType==='ongrid'?'On Grid':'Hybrid')+')';
+    ah.className = 'field-hint ok';
+  } else {
+    ai.classList.remove('auto-ok');
+    ah.textContent = kw ? 'No rate set for '+kw+' kW — add in Settings' : '';
+    ah.className = 'field-hint';
+  }
+  setTickHint('oe', matchKw('oe',currentType,kw), 'amber', r=>r.amount);
+  const discAmt = kwM && parseFloat(kwM.discount||0)>0 ? kwM.discount : null;
+  setTickHint('disc', discAmt?{amount:discAmt}:null, 'green', r=>r.amount);
+  onSankwChange();
+  calc();
+}
+
+function onSankwChange() {
+  const sankw = parseFloat(document.getElementById('f-sankw').value) || 0;
+  const hint  = document.getElementById('sankw-hint');
+  if (sankw) {
+    const ncM = matchKw('nc', currentType, sankw);
+    const slM = matchRange(currentType, sankw);
+    const parts = [];
+    if (ncM && parseFloat(ncM.amount||0)>0)  parts.push('NC: '+fmt(parseFloat(ncM.amount)));
+    if (slM && parseFloat(slM.amount||0)>0)  parts.push('Sanction: '+fmt(parseFloat(slM.amount)));
+    if (parts.length) {
+      hint.textContent = '⚡ Available — '+parts.join(', ');
+      hint.className = 'field-hint warn';
+    } else {
+      hint.textContent = 'No rules for '+sankw+' kW — set in Settings';
+      hint.className = 'field-hint';
+    }
+  } else {
+    hint.textContent = ''; hint.className = 'field-hint';
+  }
+  setTickHint('nc', matchKw('nc',currentType,sankw), 'amber', r=>r.amount);
+  setTickHint('sl', matchRange(currentType,sankw),    'amber', r=>r.amount);
+  calc();
+}
+
+function setTickHint(key, match, color, getAmt) {
+  const amt  = match ? parseFloat(getAmt(match)||0) : 0;
+  const avId = key==='disc'?'disc-avail':key+'-avail';
+  const hnId = key==='disc'?'disc-hint':key+'-hint';
+  const tick = document.getElementById('tick-'+key);
+  tick.classList.remove('applied');
+  if (amt > 0) {
+    const av=document.getElementById(avId);
+    av.style.display='inline-flex'; av.textContent=fmt(amt); av.className='avail-tag '+color;
+    const hn=document.getElementById(hnId);
+    hn.textContent='Click ✓ to apply '+fmt(amt);
+    hn.className='field-hint '+(color==='green'?'ok':'warn');
+    tick.classList.remove('unavailable');
+  } else {
+    document.getElementById(avId).style.display='none';
+    document.getElementById(hnId).textContent='';
+    tick.classList.add('unavailable');
+  }
+}
+
+// ════════════════════════════════════════
+// TICK APPLY
+// ════════════════════════════════════════
+function applyTick(key) {
+  const tick = document.getElementById('tick-'+key);
+  if (tick.classList.contains('unavailable')) return;
+  const kw    = parseFloat(document.getElementById('f-kw').value) || 0;
+  const sankw = parseFloat(document.getElementById('f-sankw').value) || 0;
+  let amt=null, inputId='';
+  if      (key==='nc')   { const m=matchKw('nc',currentType,sankw); amt=m?m.amount:null; inputId='f-ncfee'; }
+  else if (key==='sl')   { const m=matchRange(currentType,sankw); amt=m?m.amount:null; inputId='f-sanction'; }
+  else if (key==='oe')   { const m=matchKw('oe',currentType,kw); amt=m?m.amount:null; inputId='f-other'; }
+  else if (key==='disc') { const m=matchKw('kw',currentType,kw); amt=m&&parseFloat(m.discount||0)>0?m.discount:null; inputId='f-discount'; }
+  if (amt && parseFloat(amt)>0) {
+    document.getElementById(inputId).value = parseFloat(amt);
+    tick.classList.add('applied');
+    const hn=document.getElementById(key==='disc'?'disc-hint':key+'-hint');
+    hn.textContent='✓ Applied '+fmt(parseFloat(amt)); hn.className='field-hint ok';
+    calc();
+  }
+}
+
+// ════════════════════════════════════════
+// CALC
+// ════════════════════════════════════════
+function calc() {
+  const fin=v('f-final'),act=v('f-actual'),nc=v('f-ncfee'),san=v('f-sanction'),
+        st=v('f-stamp'),pr=v('f-proc'),ot=v('f-other'),dis=v('f-discount');
+  const fees=nc+san+st+pr+ot, srr=fin-act-fees-dis;
+  const el=document.getElementById('srr-result');
+  el.textContent=fmt(srr);
+  el.className='result-amt '+(srr>0?'pos':srr<0?'neg':'zero');
+  document.getElementById('m-final').textContent   =fmt(fin);
+  document.getElementById('m-actual').textContent  =fmt(act);
+  document.getElementById('m-fees').textContent    =fmt(fees);
+  document.getElementById('m-discount').textContent=fmt(dis);
+  return srr;
+}
+function updateFvrDisplay(){
+  document.getElementById('fvr-display').textContent = document.getElementById('f-fvr').value || '—';
+}
+
+// ════════════════════════════════════════
+// SAVE ENTRY
+// ════════════════════════════════════════
+async function saveEntry() {
+  const name = document.getElementById('f-name').value.trim();
+  const fvr  = document.getElementById('f-fvr').value.trim();
+  const st   = document.getElementById('calc-status');
+  if (!name) { st.textContent='⚠ Enter customer name.'; st.className='status err'; return; }
+  if (!fvr)  { st.textContent='⚠ Enter FVR ID.';        st.className='status err'; return; }
+
+  const entry = {
+    ts: document.getElementById('f-date').value || new Date().toLocaleDateString('en-IN'),
+    type:currentType, fvr, name,
+    mobile: document.getElementById('f-mobile').value,
+    kw:     document.getElementById('f-kw').value    || '',
+    sankw:  document.getElementById('f-sankw').value || '',
+    finalAmt:v('f-final'), actualAmt:v('f-actual'), ncfee:v('f-ncfee'),
+    sanction:v('f-sanction'), stamp:v('f-stamp'), proc:v('f-proc'),
+    other:v('f-other'), discount:v('f-discount'), srr:calc()
+  };
+  entries.unshift(entry);
+  localStorage.setItem('srr_entries', JSON.stringify(entries));
+  st.textContent='✓ Saved locally.'; st.className='status ok';
+
+  if (gsUrl) {
+    st.textContent='Saving to Google Sheets…'; st.className='status info';
+    try {
+      await fetch(gsUrl, {method:'POST', mode:'no-cors',
+        headers:{'Content-Type':'application/json'}, body:JSON.stringify(entry)});
+      st.textContent='✓ Saved — '+fvr; st.className='status ok';
+    } catch(e) {
+      st.textContent='✓ Local OK. Sheets failed — check URL.'; st.className='status err';
+    }
+  }
+}
+
+// ════════════════════════════════════════
+// RESET
+// ════════════════════════════════════════
+function resetForm() {
+  ['f-name','f-mobile','f-fvr','f-kw','f-sankw','f-final','f-actual',
+   'f-ncfee','f-sanction','f-stamp','f-proc','f-other','f-discount']
+    .forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-actual').classList.remove('auto-ok');
+  ['actual-hint','sankw-hint','calc-status'].forEach(id => { document.getElementById(id).textContent=''; });
+  ['nc','sl','oe','disc'].forEach(k => {
+    const t=document.getElementById('tick-'+k);
+    t.classList.add('unavailable'); t.classList.remove('applied');
+    const h=document.getElementById(k==='disc'?'disc-hint':k+'-hint'); if(h)h.textContent='';
+    const a=document.getElementById(k==='disc'?'disc-avail':k+'-avail'); if(a)a.style.display='none';
+  });
+  document.getElementById('fvr-display').textContent='—';
+  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+  updateTypekwDisplay(); calc();
+}
+
+function copyEntry() {
+  const lines=['=== SRR Entry ===',
+    'FVR: '+(document.getElementById('f-fvr').value||'—'),
+    'Type: '+(currentType==='ongrid'?'On Grid':'Hybrid'),
+    'Name: '+document.getElementById('f-name').value,
+    'Mobile: '+document.getElementById('f-mobile').value,
+    'Cap kW: '+document.getElementById('f-kw').value,
+    'SL kW: '+document.getElementById('f-sankw').value,
+    'Final: '+fmt(v('f-final')), 'Actual: '+fmt(v('f-actual')),
+    'NC Fee: '+fmt(v('f-ncfee')), 'Sanction: '+fmt(v('f-sanction')),
+    'Stamp: '+fmt(v('f-stamp')), 'Processing: '+fmt(v('f-proc')),
+    'Other: '+fmt(v('f-other')), 'Discount: '+fmt(v('f-discount')),
+    '──────────────────', 'SRR Incentive: '+fmt(calc())];
+  navigator.clipboard.writeText(lines.join('\n')).then(()=>{
+    const s=document.getElementById('calc-status');
+    s.textContent='✓ Copied'; s.className='status ok';
+  }).catch(()=>{});
+}
+
+// ════════════════════════════════════════
+// HISTORY
+// ════════════════════════════════════════
+function setFilter(f) {
+  histFilter = f;
+  ['all','ongrid','hybrid'].forEach(x=>{
+    const el=document.getElementById('fchip-'+x);
+    el.classList.remove('active','h-active');
+    if(x===f) el.classList.add(x==='hybrid'?'h-active':'active');
+  });
+  renderHistory();
+}
+function renderHistory() {
+  const q = (document.getElementById('search-input').value||'').toLowerCase();
+  let list = entries.filter(e=>
+    e.name.toLowerCase().includes(q)||(e.fvr||'').toLowerCase().includes(q)||(e.mobile||'').includes(q)
+  );
+  if (histFilter!=='all') list = list.filter(e=>e.type===histFilter);
+  const c = document.getElementById('history-container');
+  if (!list.length) { c.innerHTML='<div class="no-data">No records found.</div>'; return; }
+  let h='<div class="htable-wrap"><table class="htable"><thead><tr><th>Type</th><th>FVR</th><th>Date</th><th>Name</th><th>kW</th><th>SL kW</th><th>Final</th><th>SRR</th></tr></thead><tbody>';
+  list.forEach(e=>{
+    const tc=e.type==='hybrid'?'hybrid':'ongrid';
+    h+=`<tr>
+      <td><span class="type-dot ${tc}">${tc==='hybrid'?'⚡ Hybrid':'☀ On Grid'}</span></td>
+      <td><span class="fvr-tag">${e.fvr||'—'}</span></td>
+      <td style="white-space:nowrap;font-size:11px">${e.ts}</td>
+      <td style="font-weight:600;color:var(--text)">${e.name}</td>
+      <td style="font-family:'DM Mono',monospace">${e.kw||'—'}</td>
+      <td style="font-family:'DM Mono',monospace">${e.sankw||'—'}</td>
+      <td style="font-family:'DM Mono',monospace">${fmt(e.finalAmt)}</td>
+      <td><span class="${e.srr>=0?'srr-pos':'srr-neg'}">${fmt(e.srr)}</span></td>
+    </tr>`;
+  });
+  h+='</tbody></table></div>'; c.innerHTML=h;
+}
+
+// ════════════════════════════════════════
+// ADJUSTMENT TAB
+// ════════════════════════════════════════
+function setAdjFilter(f) {
+  adjFilter = f;
+  ['all','neg','pos'].forEach(x=>{
+    const el=document.getElementById('adj-chip-'+x);
+    el.classList.toggle('active', x===f);
+  });
+  renderAdjEntries();
+}
+
+function renderAdjEntries() {
+  // Update summary metrics
+  const allSRR = entries.map(e=>parseFloat(e.srr)||0);
+  const totalMinus   = allSRR.filter(s=>s<0).reduce((a,b)=>a+b,0);
+  const totalSurplus = allSRR.filter(s=>s>0).reduce((a,b)=>a+b,0);
+  document.getElementById('adj-total').textContent = entries.length;
+  document.getElementById('adj-minus').textContent = fmt(totalMinus);
+  document.getElementById('adj-plus').textContent  = fmt(totalSurplus);
+
+  // Filter entries
+  let filtered = entries.map((e,i)=>({...e, _idx:i}));
+  if (adjFilter==='neg') filtered = filtered.filter(e=>parseFloat(e.srr)<0);
+  if (adjFilter==='pos') filtered = filtered.filter(e=>parseFloat(e.srr)>0);
+
+  const container = document.getElementById('adj-entries-list');
+  if (!filtered.length) {
+    container.innerHTML='<div class="no-data">No entries yet. Add entries in New Entry first.</div>';
+    return;
+  }
+
+  let h = '<div class="adj-entries-list">';
+  filtered.forEach(e=>{
+    const srr = parseFloat(e.srr)||0;
+    const selClass = adjSelected.has(e._idx)
+      ? (srr<0?'selected-minus':'selected-plus') : '';
+    const srrClass = srr>=0?'pos':'neg';
+    h += `<div class="adj-entry-row ${selClass}" onclick="toggleAdjEntry(${e._idx})">
+      <div>
+        <div class="adj-entry-name">${e.name}</div>
+        <div class="adj-entry-fvr">${e.fvr||'—'} · ${e.ts}</div>
+      </div>
+      <div class="adj-select-label">${srr<0?'MINUS':'SURPLUS'}</div>
+      <div class="adj-entry-srr ${srrClass}">${fmt(srr)}</div>
+    </div>`;
+  });
+  h += '</div>';
+  container.innerHTML = h;
+}
+
+function toggleAdjEntry(idx) {
+  if (adjSelected.has(idx)) adjSelected.delete(idx);
+  else adjSelected.add(idx);
+  renderAdjEntries();
+}
+function selectAllAdj() {
+  entries.forEach((_,i)=>adjSelected.add(i));
+  renderAdjEntries();
+}
+function clearAdjSelection() {
+  adjSelected.clear();
+  renderAdjEntries();
+  document.getElementById('adj-suggestions').innerHTML='';
+}
+
+function generateSuggestions() {
+  const selected = [...adjSelected].map(i=>entries[i]).filter(Boolean);
+  const minus    = selected.filter(e=>parseFloat(e.srr)<0);
+  const surplus  = selected.filter(e=>parseFloat(e.srr)>0);
+
+  const container = document.getElementById('adj-suggestions');
+
+  if (selected.length === 0) {
+    container.innerHTML='<div class="no-suggestions"><div class="no-suggestions-icon">☝</div><p>Select at least one entry above, then tap Generate Suggestions.</p></div>';
+    return;
+  }
+  if (minus.length===0) {
+    container.innerHTML='<div class="no-suggestions"><div class="no-suggestions-icon">✓</div><p>No minus SRR entries selected. All selected entries are in surplus — no adjustment needed!</p></div>';
+    return;
+  }
+  if (surplus.length===0) {
+    container.innerHTML='<div class="no-suggestions"><div class="no-suggestions-icon">⚠</div><p>No surplus SRR entries selected. Select some surplus entries so the system can suggest adjustments.</p></div>';
+    return;
+  }
+
+  let html = `<div class="slabel">Adjustment Suggestions</div>`;
+  let usedSurplus = surplus.map(e=>({...e, remaining: parseFloat(e.srr)}));
+
+  minus.forEach(minusEntry => {
+    const need = Math.abs(parseFloat(minusEntry.srr));
+    let covered = 0;
+    let usedList = [];
+
+    // Greedy: try to cover with as few surplus entries as possible
+    // Sort surplus by SRR descending (biggest first)
+    const sortedSurplus = [...usedSurplus].sort((a,b)=>b.remaining-a.remaining);
+
+    for (let s of sortedSurplus) {
+      if (covered >= need) break;
+      if (s.remaining <= 0) continue;
+      const take = Math.min(s.remaining, need - covered);
+      usedList.push({entry:s, take});
+      covered += take;
+    }
+
+    // Update remaining for used surplus entries
+    usedList.forEach(u=>{
+      const orig = usedSurplus.find(s=>s.fvr===u.entry.fvr);
+      if (orig) orig.remaining -= u.take;
+    });
+
+    const isFullyCovered = covered >= need;
+    const shortfall = need - covered;
+    const type = isFullyCovered ? 'full' : covered>0 ? 'partial' : 'partial';
+    const badgeClass = isFullyCovered ? 'full' : 'partial';
+    const badgeLabel = isFullyCovered ? '✓ Fully Covered' : `⚠ Partial (${fmt(shortfall)} short)`;
+
+    html += `<div class="suggestion-card ${type}">
+      <div class="sug-header">
+        <div class="sug-title">Adjust deficit of <span style="color:var(--red)">${fmt(parseFloat(minusEntry.srr))}</span> for <strong>${minusEntry.name}</strong> (${minusEntry.fvr||'—'})</div>
+        <span class="sug-badge ${badgeClass}">${badgeLabel}</span>
+      </div>
+      <div class="sug-detail">`;
+
+    if (usedList.length === 0) {
+      html += `No surplus available to cover this deficit.`;
+    } else {
+      html += `Use surplus from:<br>`;
+      usedList.forEach(u=>{
+        html += `&nbsp;• <strong>${u.entry.name}</strong> (${u.entry.fvr||'—'}) — adjust <strong>${fmt(u.take)}</strong> from their SRR of ${fmt(parseFloat(u.entry.srr))}<br>`;
+      });
+    }
+
+    html += `</div>`;
+
+    if (usedList.length>0) {
+      const afterMinus = parseFloat(minusEntry.srr) + covered;
+      html += `<div class="sug-after">After adjustment → ${minusEntry.name}: <span class="${afterMinus>=0?'pos':'neg'}">${fmt(afterMinus)}</span>`;
+      usedList.forEach(u=>{
+        const afterSurplus = parseFloat(u.entry.srr) - u.take;
+        html += ` &nbsp;|&nbsp; ${u.entry.name}: <span class="${afterSurplus>=0?'pos':'neg'}">${fmt(afterSurplus)}</span>`;
+      });
+      html += `</div>`;
+    }
+
+    html += `</div>`;
+  });
+
+  // Net summary
+  const totalNeed    = minus.reduce((a,e)=>a+Math.abs(parseFloat(e.srr)),0);
+  const totalAvail   = surplus.reduce((a,e)=>a+parseFloat(e.srr),0);
+  const netAfter     = totalAvail - totalNeed;
+  html += `<div class="card" style="margin-top:4px">
+    <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Net Position After All Adjustments</div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13px">
+      <div><span style="color:var(--text3)">Total Deficit:</span> <strong style="color:var(--red)">${fmt(-totalNeed)}</strong></div>
+      <div><span style="color:var(--text3)">Total Surplus:</span> <strong style="color:var(--green)">${fmt(totalAvail)}</strong></div>
+      <div><span style="color:var(--text3)">Net:</span> <strong style="color:${netAfter>=0?'var(--green)':'var(--red)'}">${fmt(netAfter)}</strong></div>
+    </div>
+  </div>`;
+
+  container.innerHTML = html;
+  container.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ════════════════════════════════════════
+// SETTINGS TABLES
+// ════════════════════════════════════════
+function switchStab(section, type) {
+  ['ongrid','hybrid'].forEach(t=>{
+    document.getElementById(`${section}-stab-${t}`).classList.toggle('active', t===type);
+    document.getElementById(`${section}-pane-${t}`).classList.toggle('active', t===type);
+  });
+}
+const emptyRow=(cols,msg)=>`<tr><td colspan="${cols}" style="text-align:center;color:var(--text3);padding:12px;font-size:11px">${msg}</td></tr>`;
+
+function renderKwTable(type) {
+  const tb=document.getElementById(`kw-${type}-tbody`);
+  const list=rates.kw?.[type]||[];
+  if(!list.length){tb.innerHTML=emptyRow(4,'No rates yet.');return;}
+  tb.innerHTML=list.map((r,i)=>`<tr>
+    <td><input type="number" step="0.01" value="${r.kw||''}" placeholder="2.95"/></td>
+    <td><input type="number" value="${r.actual||''}" placeholder="170000"/></td>
+    <td><input type="number" value="${r.discount||''}" placeholder="2950"/></td>
+    <td><button class="del-btn" onclick="delKwRow('${type}',${i})">✕</button></td>
+  </tr>`).join('');
+}
+function addKwRow(type){(rates.kw[type]=rates.kw[type]||[]).push({kw:'',actual:'',discount:''});renderKwTable(type);}
+function delKwRow(type,i){rates.kw[type].splice(i,1);renderKwTable(type);}
+
+function renderFixedTable(section,type) {
+  const tb=document.getElementById(`${section}-${type}-tbody`);
+  const list=(rates[section]?.[type])||[];
+  if(!list.length){tb.innerHTML=emptyRow(3,'No entries yet.');return;}
+  tb.innerHTML=list.map((r,i)=>`<tr>
+    <td><input type="number" step="0.01" value="${r.kw||''}" placeholder="2.95"/></td>
+    <td><input type="number" value="${r.amount||''}" placeholder="50"/></td>
+    <td><button class="del-btn" onclick="delFixed('${section}','${type}',${i})">✕</button></td>
+  </tr>`).join('');
+}
+function addFixed(s,t){(rates[s][t]=rates[s][t]||[]).push({kw:'',amount:''});renderFixedTable(s,t);}
+function delFixed(s,t,i){rates[s][t].splice(i,1);renderFixedTable(s,t);}
+
+function renderRangeTable(type) {
+  const tb=document.getElementById(`sl-${type}-tbody`);
+  const list=rates.sl?.[type]||[];
+  if(!list.length){tb.innerHTML=emptyRow(4,'No ranges yet.');return;}
+  tb.innerHTML=list.map((r,i)=>`<tr>
+    <td><input type="number" step="0.01" value="${r.min||''}" placeholder="1"/></td>
+    <td><input type="number" step="0.01" value="${r.max||''}" placeholder="3"/></td>
+    <td><input type="number" value="${r.amount||''}" placeholder="1000"/></td>
+    <td><button class="del-btn" onclick="delRange('${type}',${i})">✕</button></td>
+  </tr>`).join('');
+}
+function addRange(s,type){(rates.sl[type]=rates.sl[type]||[]).push({min:'',max:'',amount:''});renderRangeTable(type);}
+function delRange(type,i){rates.sl[type].splice(i,1);renderRangeTable(type);}
+
+function renderAllTables() {
+  renderKwTable('ongrid'); renderKwTable('hybrid');
+  ['nc','oe'].forEach(s=>{renderFixedTable(s,'ongrid');renderFixedTable(s,'hybrid');});
+  renderRangeTable('ongrid'); renderRangeTable('hybrid');
+}
+
+// ════════════════════════════════════════
+// MISC
+// ════════════════════════════════════════
+function clearLocalEntries() {
+  if(confirm('Clear all local entry history? Rates and Sheets data are safe.')){
+    entries=[]; adjSelected.clear();
+    localStorage.removeItem('srr_entries');
+    renderHistory(); renderAdjEntries();
+    showSt('clear-status','✓ Cleared.','ok');
+  }
+}
+function showSt(id,msg,cls){
+  const el=document.getElementById(id); if(!el) return;
+  el.textContent=msg; el.className='status '+(cls||'ok');
+  setTimeout(()=>{el.textContent='';},3500);
+}
+
+init();
+</script>
+</body>
+</html>
